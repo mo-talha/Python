@@ -80,13 +80,13 @@ CPython = {
 }
 
 There are other runtimes to run python code other than CPython, one is PyPy it is does the same steps as CPython but it has a JIT compiler which hot codes any repetitive code to machine code to avoid re interpreting the same code again and again.
-PyPy = {
+`PyPy = {
     "RPython Toolchain": "Translates RPython → C",
     "Python Interpreter": "Written in RPython",
     "JIT Compiler":       "Runtime optimization",
     "GC":                 "Different garbage collector",
     "Compatibility":      "cpyext for C extensions"
-}
+}`
 
 
 
