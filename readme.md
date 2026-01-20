@@ -666,6 +666,101 @@ s1.issubset() → False, because s2 does not have 1
 s1 = {1, 2, 3}, s2 = {2, 3, 4}
 s1.issuperset() → False, because s1 does not have 4
 
+## Lecture - 27
+### Dictionary 
+Dictionary stores data in the form of a key, value pair.
+
+- Dictionary is mutable.
+- Dictionary has no indexing.
+- Dictionary key must be of immutable type and value can be of mutable type.
+- Keys should be unique.
+
+### Creating a Dictionary
+d1={}
+d = {1: “talha”, 2:“yaseen”}
+d = {1: “talha”, 1:”yaseen”}, this will not throw an error, instead it will replace “talha” with “yaseen”. The most recent will be replaced by the latest one.
+
+We can create a dictionary inside a dictionary, basically it is same as a JSON object
+ex:
+```{
+	id: 1,
+	name: “BTC”,
+	data: {
+		“price”: 67000,
+		“vol”: “10M”
+}
+}
+```
+Accessing items of Dictionary:
+```d = {
+	“id”: 1,
+	“name”: “BTC”,
+	“data”: {
+		“price”: 67000,
+		“vol”: “10M”
+    }
+}
+```
+
+d[“id”] → this will give 1
+d[“data”][“price”] → this will give 67000
+
+We can also use the get() function to get a value of a key.
+ex: d.get(“name”)
+
+### Editing a Dictionary:
+```
+d = {
+	“id”: 1,
+	“name”: “btc”
+}
+```
+
+d[“name”] = “eth”
+
+### Adding new key value pairs into a Dictionary:
+```
+d = {
+	“id”: 1,
+	“name”: “Bitcoin”,
+	“data”: {
+		“price”: 67000,
+		“vol”: “10M”
+    }
+}
+```
+
+d[“code”] = “btc”
+d[“data”][“mcap”] = “340B”
+
+### Deleting a key in Dictionary:
+We can delete a whole dictionary using del d.
+del d[“code”], this will delete the code key value pair.
+
+### Membership operator:
+code in d → this will return true.
+
+for i in d:
+	print(i) **this will only print the keys**
+
+for i in d:
+	print(i, d[i]) **this will print both the key and the value**
+
+### Functions on Dictionary:
+1. len() - returns the number of key value pairs present in the dict
+2. min() - returns the key which is min, incase keys are of type string it will return the key which is lexicographically smallest.
+3. max() - returns the key which is max
+4. sorted() - sorts the dict keys in ascending order and returns the keys in a list.
+5. sorted(d, reverse=True) - sorts the dict keys in descending order.
+
+6. keys() - it returns a list of all the keys in a dict.
+ex: d.keys() → [“id”, “name”, “data”]
+
+7. values() - it returns the values of all the keys in a list.
+ex: d.values() → [1, “Bitcoin”]
+
+
+
 
 
 
