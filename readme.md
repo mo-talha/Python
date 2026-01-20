@@ -544,5 +544,128 @@ print(t3) → (1, 2, 3, 1, 2, 3, 1, 2, 3)
 Tuples are read only data type, because tuples are immutable, write operations are not possible once a tuple is created.
 Wherever data integrity is important we can use a tuple.
 
+## Lecture - 26 
+### Sets
+Sets do not allow duplicates
+Sets have no indexing/slicing
+Sets don’t allow mutable data types
+Set itself is a mutable data type.
+
+### Creating a Set
+s1 = set()
+s1 = {1, 2} **both set and dictionary or map are represented with curly braces.**
+
+**Note:** An empty set cannot be created by doing s1 = {}, this will by default create a dictionary. If we want to create an empty set we have to create by doing s1 = set(), using the constructor set().
+
+Sets can also have mix of different data types:
+s1 = {1, True, “Hello”, 4.5}
+
+**Sets cannot store mutable data types because set itself is a mutable:**
+It cannot store a list, s1 = {[1, 2, 3]} this is not possible
+It can store a tuple, or a string because these are immutable, s1 = {(1, 2, 3), “Hello”}
+
+Also, a set automatically stores elements in sorted order:
+s1 = {2, 3, 1}
+print(s1) → this will print {1, 2, 3}
+
+Similarly, s1 = {(1, 2, 3), “Hello”}
+print(s1) → this will print {“Hello”, {1, 2, 3}}
+
+This happens because the set internally uses hashing, the algorithm creates a hash for each element, and the elements are arranged according to their hash values.
+
+Also, sets have no indexing, sets do not follow the order of elements in which they are sent into a set.
+
+We cannot create 2D or 3D sets, because set is a mutable type and set does not store mutables.
+s1 = {{1, 2}, {3, 4}} // this is not possible.
+
+### Accessing Items in a Set:
+We cannot access items in a set similarly we cannot delete items from a set, Indexing and slicing will not work.
+
+We might think we will turn the set to a list, modify the list and turn it back to a set, this will create a new set with the modification but the original one will still remain the same.
+
+Even though set is a mutable type we cannot make modifications by replacing one element with another from it.
+
+### Adding and Deleting items from a Set:
+We use the add() function to add an item to a set.
+s1 = {1, 2, 3}
+s1.add(4)
+
+We can delete a whole set using del keyword
+We can delete an item using the remove() method.
+
+s1 = {1, 2, 3}
+del s1 → this will remove s1 from the memory
+
+s1 = {1, 2, 3}
+s1.remove(3) → this will remove 3, making the set {1, 2}
+
+We can also use pop(), this will delete the last item from the set
+s1 = {1, 2, 3}
+s1.pop(), this will remove 1 and not 3, because internally the set uses hashing, and the hash of 1 might be at last than hash of 3.
+
+### Hashing:
+We can search or look if an element exists in a set using the membership operator in.
+Add, Searching and Removing take O(1) time in a set and a dict. Because internally the elements are hashed and stored in a bucket. If we have to check if an item exists, then python hashes that element again and checks the corresponding bucket immediately, since it has the hash it can reach the exact spot immediately giving O(1) time.
+
+Similarly, removing is also O(1), because an element which is to be removed is hashed and looked up straight into the bucket and removed.
+
+Similarly, adding an item is also O(1), due to hashing.
+
+### Why does Set only store immutable and hashable data ?
+Because it is easy to maintain O(1) insertion, removal and search of an item. Internally set uses a hash table (similar to an array) to store items. When an item is inserted in a set, it is hashed and at the hash value bucket the item is stored. 
+
+Now, when the same item is searched in a set, python creates its hash and directly looks into the corresponding cell in the hash table. Similarly for delete.
+
+If it stores mutable data like a list,
+l1 = [1, 2, 3]
+s1 = {l1}
+Let’s say for example l1’s hash value is 6, then [1, 2, 3] will be stored at the 6th bucket.
+
+Now, let's say someone modifies the l1
+l1.add(4), now l1’s hash changes let's say it becomes 7.
+
+Now when someone tries to check if l1 exists in the set, then he won’t be able to find it because it's hash is changed, the l1 which was stored its hash was 6 now its 7, similarly we won’t be able to remove l1 because there is nothing at 7 in the hash table.
+
+That’s why a set allows a tuple but not a list, a tuple is immutable i.e. no items can be inserted or deleted once a tuple is created, similarly int and string.
+Since these are immutable they cannot be modified if it cannot be modified its hash will always remain constant. 
+
+### Operations on a Set
+1. Concatenation will not work on a set
+2. Multiplication will not work on a set
+3. Membership will work, i.e. 1 in s1, for i in s1 etc
+
+### Functions on a Set
+1. len() to find the len of a set
+2. min() and max()
+3. sum() 
+4. sorted() - this will return a copy of a set but it will be a list.
+s1 = {3, 2, 1}, sorted(s1) will return a list, sorted(s1, reverse=True) will sort in ascending order and return a list.
+
+5. union() - it returns a new set with unique elements from both the sets.
+s1 = {1, 2, 3}, s2 = {2, 3, 4, 5, 6}
+s1.union(s2) → {1, 2, 3, 4, 5, 6}
+
+6. intersection() - it returns a new set with common values from 2 sets.
+s1 = {1, 2, 3}, s2 = {2, 3, 4}
+s1.union(s2) → {2, 3}
+
+7. difference() - it returns a new set which will have those elements from one set which are not there in the other set.
+s1 = {1, 2, 3}, s2 = {2, 3, 4}
+s1.difference() → {1}
+s2.difference() → {4}
+
+8. isdisjoint() - returns true if both sets do not have any common items or else false.
+s1 = {1, 2, 3}, s2 = {2, 3, 4}
+s1.isdisjoint() → False, because 2 and 3 are common in both s1 and s2.
+
+9. issubset() - returns true if all elements of s1 exist in s2 or vice versa.
+s1 = {1, 2, 3}, s2 = {2, 3, 4}
+s1.issubset() → False, because s2 does not have 1
+
+10. issuperset() - returns true if s1 consists of all elements of s2 or vice versa.
+s1 = {1, 2, 3}, s2 = {2, 3, 4}
+s1.issuperset() → False, because s1 does not have 4
+
+
 
 
