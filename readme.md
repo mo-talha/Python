@@ -243,14 +243,19 @@ We can also sort a string in descending order using the reverse argument in the 
 sorted(msg, reverse=True) will return a list of sorted characters in descending order according to their ASCII values.
 5. capitalize() - It changes the first char of a string to capital letter. 
 ex: c = “kolkata”, c.capitalize() → this will not modify c, but it will return a new copy of c whose first letter will be capital, ex: Kolkata
+
 6. title() - It changes the first char of every word in a sentence to capital.
 ex: c = “it is raining today”, c.title() will return a new string/sentence which will be
 “It Is Raining Today”
+
 7. upper() - It returns an uppercase copy of the given string.
 ex: c = “kolkata”, c.upper() → will return “KOLKATA”
+
 8. lower() - It is similar to upper, just that it returns a lowercase version of the given string.
+
 9. swapcase() - It gives the count of a substring inside a string. 
 ex: c = “kolkata”, c.count(k) → this will return 2, because there are 2 ks.
+
 10. find() / index() - It returns the index of a character in the string. If there are many characters as the given character, then it will return its first occurrence.
 ex: c = “kolkata”, c.find(k) → it will return 0.
 
@@ -262,6 +267,7 @@ The only difference index() has is, if it does not find the target then it will 
 
 11. endswith()/startswith()
 c = “it is raining”, c.endswith(“ing”) → this will return true, similarly startswith().
+
 12. format()
 It is used to fill blanks in a string, it can be used in many ways.
 ex: 
