@@ -99,3 +99,135 @@ PyPy = {
     "Compatibility":      "cpyext for C extensions"
 }
 ```
+
+**Points to remember:**
+The python virtual machine CPython has both compiler and interpreter. The source code is
+compiled to bytecode by the compiler then the interpreter executes the bytecode.
+
+- Python, Java is a compiled and interpreted language.
+- C, Rust and Go are only compiled languages, i.e. their compiler directly compiles the source code to machine code no bytecode.
+
+## Keywords:
+Keywords are reserved words, these words cannot be used as variable names, function names etc in a program. Keywords cannot be changed. Ex: for, while, print etc
+There are 33 keywords in python.
+
+## Identifiers:
+Identifiers are names used to identify a variable, function, class, module or an object.
+Rules for naming identifiers:
+Can only start with an alphabet or an _.
+Followed by 0 or more letters, _ and digits
+Keywords cannot be used as identifiers.
+
+Python is a case sensitive language, it means there will always be difference b/w false and False as **False** is a keyword.
+
+## Lecture - 6
+**What is the input method ?**
+input() method, this is used to take input from the user. It takes in an argument called prompt.
+Ex: input(prompt=“Your name”)/input(“Your name”) → this will print Your name on the console and give a blinking cursor to the user.
+
+Also the input method takes prompt as a string, so even if we enter int, float etc it will consider it as a string.
+Ex: If we write a program to add two numbers by taking the user input
+num_1 = input(“Enter the first number: ”)
+num_2 = input(“Enter the second number: ”)
+print(num_1 + num_2)
+When user enters numbers 1 and 2 in the console, the print function will print 12, since the prompt takes in a string and string is a universal type in python i.e. any data type can be stored as a string but not the vice versa, 
+So instead of printing 1+2 = 3 it is giving 12 because since both num_1 and num_2 are prompts which are strings a string concatenation takes place.
+
+## Lecture - 7
+Type Conversion
+- There are two types of type conversions in python
+- Implicit conversion
+- Explicit conversion 
+
+**Implicit Conversion**
+This conversion is done by python without specifying. Ex: 2 + 4.5 = 6.5, here an int is added with a float, python automatically gives a floating result.
+
+**Explicit Conversion**
+Every data type has a type conversion method in python.
+Ex: int(4.5) → this will give 4, similarly, float(3) → 3.0, str(4) → ‘4’
+
+**Note:** Also type conversion is not permanent i.e. if a = ‘3’, int(a) → this will give 3 but if we print a it will still be string ‘3’. Hence a conversion method returns a new value, i.e. int(a) will give a new value 3 which can be stored in another variable.
+
+## Lecture-8
+Literal is a value given to a variable. Ex: num = 2, here 2 is a literal, name = ‘taz’ here taz is a literal.
+
+In python we have 4 types of literal, numeric literals, string literals, boolean literals and special literals.
+
+### None in python
+We know that we cannot simply declare a variable in python without a literal, this is where we can None.
+
+None is used to specify that there is no value or simply nothing. Similar to null in Java.
+In Java this is possible int x; without specifying a literal like 0 or 1 etc. This is possible because internally int’s value is 0.
+
+In python this is not the case, we cannot just leave it like x or num etc hence we do 
+num = None.
+
+## Lecture-9
+Operators in python
+### Arithmetic Operators:
+1. +, used to add numbers
+2. -, used to subtract two numbers
+3. /, used to divide two numbers, gives a floating value, ex: print(5/2) → gives 2.5
+4. %, gives the remainder of a division
+5. *, used to multiply two numbers
+6. //, integer division operator, gives out an integer value after a division. print(5//2) → prints 2
+7. **, it used to calculate n power x, ex: 5 ** 2 = 25, it basically means 5 power 2.
+
+### Comparison Operators:
+1. > - used to check if a > b
+2. < - used to check if a < b
+3. >= : used to check if a > or = b
+4. <= : used to check if a < or = b
+5. == : used to check if a == b
+6. != : used to check if a != b
+
+### Logical Operators:
+1. or - used to execute an operation if one among the two values is true. ex: if a = 2 or b =1 print(‘hi’)
+2. and - used to execute an operation if both values are true ex: if a and b == 2 print(2);
+3. not - 
+
+### Bitwise Operators:
+These operators are used and work only on binary numbers.
+
+1. & : this is different from logical and. Ex: if we do print(2 & 3) → this gives 2.
+because, 0 1 0
+                1 1 1
+                —----
+                0 1 0 → this is the binary of 2, hence we get 2.
+In & operation if any one bit among two is 0 then its result is 0, if both are 0 then it is 0 or if both bits are 1 then result is 1
+| : this is bitwise or (|) unlike logical or, it is also used to perform operations b/w two binary numbers.
+0 1 0
+1 1 1
+—---
+1 1 1 → This is the binary of 3.
+	In | if one digit is 1 or both digits are 1 then the ans is 1, if both digits are 0 then ans is 0.
+
+2. >> : right shift and, learn about this
+3. << : left shift and
+4. ~ : one's complement operator.
+
+### Assignment Operator:
+1. = : this is used to assign a value to a variable, like a=1, name = ‘taz’ etc.
+2. += : this is used to increment a value, ex: a += 1, it is the same as a = a + 1.
+3. -= : similar as above but decrement.
+4. *= : used to multiply
+5. /= : used to divide a num
+**a++, ++a, --a, a-- is not allowed in python to increment.**
+
+### Identity Operator:
+is : it is used to check if two values are stored in the same memory location or not, or we can also say if two different variables are addressing to the same memory location or not.
+Ex: a = 1, b = 1, print(a is b) → this will print True, as both a and b are pointing to the same 1 in the memory.
+
+a = [1, 2, 3], b = [1, 2, 3], print(a is b) → this will print false, because incase of a list even if they look identical but on every new assignment a new object is created in the memory hence b will have a different memory address to a.
+
+Hence is used to check if two variables are addressing the same object or different ones.
+
+### Membership Operators:
+in : it is used to check if some value exists in another value. Ex: print(‘D’ in “Delhi”) this will print True.
+
+similarly a = [1, 2, 3], print(2 in a) → True.
+
+We can also do, (2 not in a) → this will print False.
+
+
+
