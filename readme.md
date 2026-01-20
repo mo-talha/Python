@@ -70,14 +70,14 @@ It consists of a Parser, a Compiler and a Runtime and many other things like the
 A language like C is directly compiled to machine code hence it is faster, it skips the step of interpretation.**
 
 **Simplified view of CPython architecture:**
-CPython = {
+```CPython = {
     "Parser":       "Converts source to AST",
     "Compiler":     "AST → Bytecode (.pyc files)",
     "Interpreter":  "Bytecode → Execution (C VM)",
     "Memory Mgmt":  "Reference counting + GC",
     "Standard Lib": "Batteries included",
     "C API":        "Interface for C extensions"
-}
+}```
 
 There are other runtimes to run python code other than CPython, one is PyPy it is does the same steps as CPython but it has a JIT compiler which hot codes any repetitive code to machine code to avoid re interpreting the same code again and again.
 `PyPy = {
