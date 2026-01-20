@@ -484,4 +484,65 @@ We first find the @ character in the string
 Then we will slice the string from 1st to @’s index
 return s[0: s.find(@)]
 
+## Lecture - 25
+### Tuples
+They are same as lists but with slight differences
+
+### Creating a Tuple:
+t = ()
+t = tuple()
+t = (1, 2, 3)
+t = ([1, 2, 3, 4])
+
+All the above will create a tuple,
+
+**t = (1), creating a tuple with a single item, will not create a tuple unless we use a comma after the single element.**
+So, t =(1,) will create a tuple, similarly, t = (“taz”, )
+
+### Accessing Elements in a Tuple:
+t = (1, 2, 3, 4)
+t[0]
+we can also access via slicing, t[0:2], the upper bound will be excluded
+
+t[-1] , will give the last elem
+
+
+### Modifying/Editing a Tuple:
+This is not possible because unlike list, tuple is immutable i.e. once a tuple is created it cannot be modified, we cannot add or delete elements from a tuple. 
+Similar to Strings, strings are also immutable. 
+s = “talha”, 
+s+”mohammed”
+print(s) → this will print “talha” only, because strings are immutable, **the concatenation will create a new object of string**, which will be talhamohammed
+
+**We can delete a tuple object but we cannot delete anything inside a tuple.**
+so,
+t1 = (1, 2, 3, 4)
+del t1, this will delete the t1
+del t1[-1] this will not be possible, because tuples are immutable.
+
+### Operations on Tuples:
+1. Concatenation:
+We can concatenate 2 tuples, it will be a new object with the values of t1 and t2, but t1 and t2 will remain the same.
+So, t1 = (1, 2, 3), t2 = (4, 5, 6)
+t3 = t1+t2 
+print(t3) → (1, 2, 3, 4, 5, 6)
+
+2. Multiplication:
+t1 = (1, 2, 3)
+t3 = t1 * 3, this will create a new tuple in which t1 will be repeated 3 times
+print(t3) → (1, 2, 3, 1, 2, 3, 1, 2, 3)
+
+3. Membership operator or in: same as in lists
+
+### Functions of Tuples:
+1. len() : returns len of the tuple
+2. min(): returns min number in a tuple
+3. max(): returns max number in a tuple
+4. sum(): returns sum of all numbers in a tuple
+5. sorted(): sorts a tuple in ascending order but converts it to a list
+
+Tuples are read only data type, because tuples are immutable, write operations are not possible once a tuple is created.
+Wherever data integrity is important we can use a tuple.
+
+
 
