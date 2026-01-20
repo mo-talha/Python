@@ -229,5 +229,86 @@ similarly a = [1, 2, 3], print(2 in a) → True.
 
 We can also do, (2 not in a) → this will print False.
 
+## Lecture - 23
+### String functions:
+**Common functions:** These functions are available in other data structures as well like lists, tuples etc.
+
+1. len() - gives the len of a string
+2. max() - gives the max ASCII val character in a string
+3. min() - gives the min ASCII val character in a string
+4. sorted() - sortes the characters in a string according to the ASCII value and returns a list of separate characters of that string.
+ex: msg = “dcba” → sorted(msg) gives [‘a’, ‘b’, ‘c’, ‘d’]
+We can also sort a string in descending order using the reverse argument in the sorted function.
+
+sorted(msg, reverse=True) will return a list of sorted characters in descending order according to their ASCII values.
+5. capitalize() - It changes the first char of a string to capital letter. 
+ex: c = “kolkata”, c.capitalize() → this will not modify c, but it will return a new copy of c whose first letter will be capital, ex: Kolkata
+6. title() - It changes the first char of every word in a sentence to capital.
+ex: c = “it is raining today”, c.title() will return a new string/sentence which will be
+“It Is Raining Today”
+7. upper() - It returns an uppercase copy of the given string.
+ex: c = “kolkata”, c.upper() → will return “KOLKATA”
+8. lower() - It is similar to upper, just that it returns a lowercase version of the given string.
+9. swapcase() - It gives the count of a substring inside a string. 
+ex: c = “kolkata”, c.count(k) → this will return 2, because there are 2 ks.
+10. find() / index() - It returns the index of a character in the string. If there are many characters as the given character, then it will return its first occurrence.
+ex: c = “kolkata”, c.find(k) → it will return 0.
+
+we can also find a word, it will return the index of the first character of the word.
+ex: c = “it is raining today”, c.find(“raining”) → this will return 6, r of raining is starting at index 6.
+
+If it does not find the target word or character it will return -1.
+The only difference index() has is, if it does not find the target then it will throw an error.
+
+11. endswith()/startswith()
+c = “it is raining”, c.endswith(“ing”) → this will return true, similarly startswith().
+12. format()
+It is used to fill blanks in a string, it can be used in many ways.
+ex: 
+c = “Hello my name is {} and I am {} years old”
+c.format(“Talha”, 25), this will return a new string which will have talha and 25 in it in place of the curly braces.
+ex: “Hello my name is Talha and I am 25 years old”
+
+c = “Hello my name is {1} and I am {0} years old”
+c.format(“Talha”, 25)
+	“Hello my name is 25 and I am Talha years old”
+	
+	c = “Hello my name is {name} and I am {age} years old”
+c.format(name = “Talha”, age = 25)
+	“Hello my name is Talha and I am 25 years old”
+
+Also, the format method can take any number of arguments, and it is not necessary that all these arguments must be used inside the sentence; we can choose only the ones which we want.
+
+ex: 
+	c = “Hello my name is {name} and I am {weight} years old”
+c.format(name = “Talha”, age = 25, weight=70)
+	“Hello my name is Talha and I am 70 years old”
+
+13. split() - it splits the words in a sentence based on a given substring, a special character or space, and returns the separated words in a list.
+ex: c = “192.0.22.200”, c.split(“.”) → [“192”, “0”, “22”, “200”]
+If nothing is passed it will split the sentence based on space,
+ex: c=“it is raining today”. c.split() → [“it”, “is”, “raining”, “today”]
+
+14. join() - it is opposite of the split function, it joins the given words in a list based on a given separator and returns a string. 
+ex: list = [“it”, “is”, “raining”, “today”]
+Syntax = separator.join()
+“ ”.join(list) → “it is raining today”
+“/”.join(list) → “it/is/raining/today”
+
+15. replace() - it replaces a given target with another value which should be given.
+ex: c = “my name is talha”, c.replace(“talha”, “yaseen”) → it will return a string in which 
+talha will be replaced by yaseen.
+
+16. strip() - it removes the leading and trailing spaces in a string and returns a new string.
+ex: c = “   talha  ”, c.strip(c) → returns “talha”
+
+**Validation Functions** - These return boolean values.
+1. isalpha() - checks if a string is only alphabets and returns true or false.
+ex: c=”talha”, c.isalpha(), returns true.
+2. isalnum() - checks if a string consists of words and nums.
+c = “FLAT20”, c.isalnum() → true, isalpha will return false.
+3. isdigit() - checks if a string is a number, if yes returns true or false.
+c = “22”, c.isdigit() returns true.
+
 
 
