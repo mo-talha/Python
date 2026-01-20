@@ -174,9 +174,9 @@ Operators in python
 7. **, it used to calculate n power x, ex: 5 ** 2 = 25, it basically means 5 power 2.
 
 ### Comparison Operators:
-1. > - used to check if a > b
+1. `>` - used to check if a > b
 2. < - used to check if a < b
-3. >= : used to check if a > or = b
+3. `>=` : used to check if a > or = b
 4. <= : used to check if a < or = b
 5. == : used to check if a == b
 6. != : used to check if a != b
@@ -202,7 +202,7 @@ In & operation if any one bit among two is 0 then its result is 0, if both are 0
 1 1 1 → This is the binary of 3.
 	In | if one digit is 1 or both digits are 1 then the ans is 1, if both digits are 0 then ans is 0.
 
-2. >> : right shift and, learn about this
+2. `>>` : right shift and, learn about this
 3. << : left shift and
 4. ~ : one's complement operator.
 
