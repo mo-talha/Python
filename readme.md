@@ -239,8 +239,8 @@ We can also do, (2 not in a) → this will print False.
 4. sorted() - sortes the characters in a string according to the ASCII value and returns a list of separate characters of that string.
 ex: msg = “dcba” → sorted(msg) gives [‘a’, ‘b’, ‘c’, ‘d’]
 We can also sort a string in descending order using the reverse argument in the sorted function.
-
 sorted(msg, reverse=True) will return a list of sorted characters in descending order according to their ASCII values.
+
 5. capitalize() - It changes the first char of a string to capital letter. 
 ex: c = “kolkata”, c.capitalize() → this will not modify c, but it will return a new copy of c whose first letter will be capital, ex: Kolkata
 
@@ -316,5 +316,172 @@ c = “FLAT20”, c.isalnum() → true, isalpha will return false.
 3. isdigit() - checks if a string is a number, if yes returns true or false.
 c = “22”, c.isdigit() returns true.
 
+## Lecture - 24
+### Lists
+### Difference b/w Array and List.
+Array can store data of a single type. An array can only store integer or character or string, it cannot store multiple data of multiple types.
+
+Array stores its data in a sequence in memory, this is not the case with lists, hence arrays are faster and lists are slower.
+
+list can store data of multiple types.
+
+### Creating a list:
+l = [], l = list()
+
+l = [1, 2, 3, 4] list store data of type int
+l = [1, 2, “talha”, false] list storing data of different types.
+
+l = list(“talha”) this will create a list, l = [“t”, “a”, “l”, “h”, “a”]
+
+### 2D lists
+l = [
+	[1, 2, 3],
+	[4, 5, 6]
+]
+
+Lists inside a list.
+
+### Accessing elements of a list:
+l = [1, 2, 3]
+l[0] → 1
+l[-1] → 3 last element of the list
+l[::-1] → reversing a list [3, 2, 1]
+
+**Lists are mutable in python, meaning they can be modified.**
+ex: 
+l = [1, 2, 3], l[2] = 4, now l will be [1, 2, 4]
+
+**We can modify them via slicing as well,**
+l = [1, 2, 3, 4], l[1:2] = [200, 300], now l will be [1, 200, 300, 3, 4]
+
+One thing to notice is, it is replacing the 1st index element 2 with 200 and adds 300 to l without replacing 3. Because [1:2] means 2 the upper bound is not considered so technically we are only replacing 1 element i.e. 2 at 1st index and since our replacement array has 2 elements 200 and 300, after replacing 1 element 2 with 200 instead of ignoring 300 it adds 300 to l.
+
+### Adding elements to a list
+We have 3 functions:
+1. append()
+2. extend()
+3. insert()
+
+**append()** - will always add a single item at the end of a list.
+ex: l = [1, 2, 3, 4]
+l.append(5), now l will be [1, 2, 3, 4, 5]
+
+l = [1, 2, 3, 4], l.append([5, 6]), l = [1, 2, 3, 4, [5, 6]] will always append a single item so it adds the whole list itself.
+l.append(“goa”), l = [1, 2 ,3, 4, “goa”]
+
+**extend()** - will always add multiple items to the end of a list. extend() only takes iterables as arguments, like lists, tuples, strings etc.
+ex: l = [1, 2, 3], l.extend([4, 5]) → l = [1, 2, 3, 4, 5]
+l.extend(1) **this is not possible, but l.extend(“a”) // this is possible as a string is iterable.**
+l = [1, 2, 3], l.extend(“goa”) → l = [1, 2, 3, “g”, “o”, “a”]
+
+**insert()** - this is used to add an element at a desired position
+ex: l = [1, 2, 3], l.insert(index, value) 
+l.insert(1, 4), l = [1, 4, 2, 3]
+
+### Deleting From a List
+We have 4 ways to delete from a list:
+1. del - it is a keyword
+2. remove()
+3. pop()
+4. clear()
+
+del:
+l = [1, 2, 3]
+del l , this will remove the whole of l itself, the list won’t exist.
+
+We can also remove a part of it, 
+l = [1, 2, 3, 4, 5]
+del l[1:3], it will remove the elements from 1 excluding the upper bound.
+l = [1, 4, 5]
+
+remove():
+If we don’t know the index we can use remove and pass in the target, it will remove by locating its existence.
+l = [1, “taz”, 2, 3]
+ex: l.remove(“taz”) → l = [1, 2, 3]
+
+pop():
+It will remove the last element in a list.
+l = [1, 2, 3, 4, 5]
+l.pop()
+l will be [1, 2, 3, 4]
+
+clear(): It will empty the list.
+l = [1, 2, 3, 4]
+l.clear()
+l will be []
+
+
+### Operations on Lists
+1. Concatenation: We can concatenate 2 lists
+ex: l1 = [1, 2, 3], l2 = [4, 5, 6]
+l1 + l2 will create a new list [1, 2, 3, 4, 5, 6], since it will create a new list we need to store it in a variable,
+l3 = l1+l2
+print(l3) → [1, 2, 3, 4, 5, 6]
+
+2. Multiplication: we can multiply a list
+ex: l1 = [1, 2, 3]
+l1 * 3, it will create repeat the same list 3 times
+l1 = [1, 2, 3, 1, 2, 3, 1, 2, 3]
+
+3. Membership operator or in: It is used to check if an element exists in a list or not and also in loops
+l = [1, 2, 3, 4]
+print(3 in l) this will print true.
+
+for i in l:
+	print(i) this will print 1, 2, 3, and 4
+
+### Functions on Lists:
+1. len() - will return the len of a list
+ex: l = [“taz”, 1, 2, 3], len(l) = 4
+
+2. max() - will return the max elem in the list, but the list must contain numerical values only. 
+ex: l = [1, 2, 3], max(l) will return 3
+
+3. min() - returns the min number in a list of numbers.
+
+4. sorted() - sorts a list in ascending order, we can also sort a list in descending order by passing the reverse argument = True
+ex: l = [1, 3, 2, 4]
+sorted(l) it will return a new list [1, 2, 3, 4]
+sorted(l, reverse=True) it will return a new list [4, 3, 2, 1]
+
+So, sorted is not a permanent operation on a list.
+
+5. sort() - it does the same thing like sorted(), but it does not return a new list, it changes the existing list. Hence, sort is a permanent operation.
+l.sort()
+l.sort(reverse=True)
+
+6. index() - it gives the element present at an index.
+l = [1, 2, 3, 4], l.index(2), this will return 3.
+
+**Functions like len(), sorted(), max(), min() are global functions, can be used on any iterable, will return a value, like sorted() will return a new list, tuple etc whichever is passed to it.**
+
+**But methods like sort(), index() etc are specific to a class like list, x = [2, 3, 1], x.sort() will sort x in memory it won’t return a new object.**
+
+**How does the sort() function sort a list of lists ?**
+Ex: temp_list = [[1, 3, 2], [1, 2, 3], [2, 3, 1], [2, 1, 3]]
+temp_list.sort()
+print(temp_list) → [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1]]
+
+It does this using lexicographical order.
+
+**Problems:**
+1. turn a sentence into title without using title
+def title1(s:str):
+    l = s.split()
+    
+    newL = []
+    for i in l:
+        newL.append(i.capitalize())
+    
+    return " ".join(newL)
+    
+s = "is it sunday tomorrow"
+newL = title1(s)
+print(titles)
+
+2. Return the name from an email
+We first find the @ character in the string
+Then we will slice the string from 1st to @’s index
+return s[0: s.find(@)]
 
 
