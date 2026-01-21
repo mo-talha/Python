@@ -691,7 +691,7 @@ ex:
 }
 }
 ```
-Accessing items of Dictionary:
+### Accessing items of Dictionary:
 ```d = {
 	“id”: 1,
 	“name”: “BTC”,
@@ -759,7 +759,116 @@ ex: d.keys() → [“id”, “name”, “data”]
 7. values() - it returns the values of all the keys in a list.
 ex: d.values() → [1, “Bitcoin”]
 
+## Lecture - 28
+Variable Referencing, Mutability, Garbage Collection
+Python has a stack memory and a heap memory, 
+**Stack stores:**
+1. Function call frames
+2. Local variables
+3. Control flow
+5. Return values
 
+**Heap stores**
+1. Objects 
+2. Data or value of the objects
+
+When we write code in a python file, the file will be in the ROM/hard drive. But when we run the file or at runtime, the variables in the code, the functions and all are loaded onto the RAM.
+
+a = 5, 5 will be created as an int object in heap memory and a will be having a reference to the memory address of 5.
+b = a, b will also have the same reference id of 5 as a has.
+since a is a variable it will be in the stack memory with a reference to the memory address of int object 5.
+
+del b, this will not delete 5, but it will delete the reference b was holding. 5 will still remain in the memory as it is, as a is still pointing at it.
+
+del a, now a’s reference is also deleted, now 5 will be cleared from the memory as there are no variables referencing that address.
+
+We can also check how many references a memory address has or a value has,
+ex: a = 5
+b = a
+c = b
+So, 5 has 3 references from a, b and c
+We can check this using the getrefcount() method from the sys module. It will return an int letting us know how many references are there to a specific object.
+
+`ref = sys.getrefcount(a)`
+
+### Garbage Collector
+When there are no variables referencing a memory address, then that address will be cleared by a garbage collector, which is also a program.
+
+It continuously monitors the memory at regular intervals to check if there is any memory location which has no references, if yes it clears it out from the memory.
+
+Weird Behaviour of Python Memory Management:
+a = 2
+b = a
+c = b
+
+sys.getrefcount(a) 
+The ref count should be 
+1 from a
+1 from b
+1 from c
+1 from getrefcount // because getrefcount will also have a ref in its stack frame
+So the total count should be 4, but it won’t be. Because 2 is a common number then this will be already being used in other software so 2 will be present in the memory and there will be many references from variables in other software programs, hence the count will be way greater than 4.
+
+If a is a less common number like,
+a = 717
+b = a
+c = b
+Now, the getrefcount will return 4, because it is highly possible that only our program has created 717 in the memory.
+
+**Same id / memory address for all variables storing or aliasing numbers from -5 to 256**
+x = 256
+y = x
+z = y
+print(id(x)) 
+print(id(y))
+print(id(z))
+All the 3 print statements will print the same memory address. This is because python by default fills up numbers from -5 to 256 automatically because numbers in this range will be the most used ones, this is software optimizing for making things fast.
+
+Once we start creating objects which are smaller than -5 and greater 256, it will start allocating new memory addresses. i.e numbers like -6, 257 etc
+
+### How Lists are stored in Memory ?
+
+We can see that separate objects are created in the memory for 1, 2 and 3, and the cells of the list are holding the reference or memory id of 1, 2 and 3 in them.
+
+![Lists in memory](images/lists_in_memory.png)
+
+### Mutability:
+The ability to change or edit the data in its memory location. Mutability depends on data type, few data types can be modified in the same memory location and some do not allow this.
+![Immutable and Mutable types](images/immutable_&_mutable_types.png)
+
+
+### Immutable data types like tuple, int, boolean etc cannot be changed once created.
+ex: x = 4 this will create a new int object in the memory, if we overwrite x = 5, then 4 will stay as it is in the memory a new object for 5 will be created and x will start pointing to the new object.
+
+t = (1, 2, 3) a tuple once created cannot be modified we cannot insert or delete, 
+t = (1, 2, 3, 4), now 4 will not be inserted in the above tuple, instead a new tuple will be created and in the memory which will have 1, 2, 3 and 4.
+
+similarly, a = “taz”
+a = “hi” + a, // this will create “hi taz” but it will be a separate string object in the memory a will shift its reference from the previous object “taz” to “hi taz”.
+
+### Mutable data types:
+l = [1, 2, 3]
+l.append(4) → this will not create a new list, but add 4 to the same l, as list is a mutable type.
+
+### Note:
+If we do concatenation of lists a new list will be created
+l1 = [1, 2, 3], l2 = [4]
+x = l1 + l2, x will be a new list, 4 will not get added to l1, but a new list will be created.
+
+### Cloning:
+When working with mutable data types, it is always best to clone the data type or create a new copy before making changes, because changes on a mutable type can cause problems in case that particular data type has to be kept unique. In such cases it is best advised to use immutable types, but still in case we have to make any changes to a mutable type we will do it by cloning or making a copy of the existing type and we will make changes on the copy.
+
+ex: l1 = [1, 2, 3]
+l2 = l1[:] **this will create a clone of l1 in a new location in the memory.**
+l2.append(4) **this will not alter l1 now.**
+
+t1 = (1, 2, [3, 4])
+t1[-1][0] = 100 
+**this is possible, even though tuple is immutable, but change being made is on a list inside the tuple, the tuple stores references of 1, 2 and the list.** 
+
+t1 = ([100, 2], [3, 4])
+c[0] = [200, 3] 
+**this will not work because we are asking the tuple to change its reference to a new list.**
 
 
 
