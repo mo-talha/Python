@@ -870,6 +870,243 @@ t1 = ([100, 2], [3, 4])
 c[0] = [200, 3] 
 **this will not work because we are asking the tuple to change its reference to a new list.**
 
+## Lecture - 29
+### Functions:
+Functions are a block of code that are used to execute a specific task. Functions help us make software modular and easier to understand.
+
+
+### Syntax of a function:
+```
+def func_name(param):
+	“”” Doc String ”””
+	//body of the function
+	return value
+```
+
+def - define keyword, used to define a function
+identifier - function name is an identifier, we cannot start identifiers with numbers and we cannot use any special characters except the underscore.
+Doc string - doc strings are used to write comments on what a function does, what kind of parameters it takes and what does it return, it is basically written to provide understanding of the function.
+return value - it is the value which a function returns.
+
+### How does a function execute in memory ?
+When a module or a .py file is executed a global frame is created for that module inside the call stack. This frame will have all the global variables, function definitions and classes. 
+Each module gets its own global frame.
+The global frame lasts until the module finishes execution.
+
+main.py
+```
+def getSum(a, b):
+	return a + b
+
+x = getSum(2, 3)
+```
+
+### Now when python main.py is run on the terminal
+
+![Immutable and Mutable types](images/call_stack.png)
+
+- Python loads the main.py module
+- A global frame is created in the call stack, with the object getSum, x variable
+- After loading, the interpreter reaches the getSum() function 
+- A new frame for getSum is created on the call stack with the arguments a and b and their values 2 and 3
+- The function executes and returns a+b 
+- Once the function returns its frame is destroyed and x gets the value of a+b
+- When a function has no return value still it returns None.
+
+### Arguments vs Params:
+```
+def sum(a, b):
+	return a + b
+```
+
+Here a and b are parameters
+sum(2, 3), 2 and 3 are arguments, the values passed to params are called arguments.
+
+### In python we have 4 types of Arguments:
+- Default Arguments
+- Positional Arguments
+- Keyword Arguments
+- Arbitrary Arguments
+
+1. Default Arguments
+When defining a function we can set default values to the params of a function, ex:
+def power(a=1, b=1):
+	return a**b
+
+How does this help ?
+Let's say someone just called the function with no arguments or a single argument
+sum() // this won’t throw any error
+sum(2) // this also won’t throw any error
+
+If there are no default arguments, then the interpreter will throw an error and the code will break.
+
+2. Positional Arguments
+When sending arguments to power(2, 3), 2 will be sent to a and 3 will be sent to b, hence these numbers go to the arguments of the actual position.
+
+3. Keyword Arguments
+What happens if we do power(b=2, a=3) ?
+The ans will be 9, because since we already set a = 1 and b = 1 as default arguments, now a and b will be pointing towards the object 1 in the memory.
+
+Now, if we do power(b=2, a=3), now we shift the pointer of a to object 3 and b’s pointer to object 2.
+Hence inside the function we return a**b, a is 3 and b is 2, so 3**2 = 9
+Even though if we take according to the position we are sending 2 at a and 3 at b, but we explicitly mention that b=2 and a=3
+
+This is called Keyword argument, it is prioritized over positional arguments. These can be used when we have a function which has a lot of params but we don’t remember the positions of each param, we only remember names, then we can use this method.
+
+4, Arbitrary Arguments
+Print function can take in multiple arguments separated by commas and it will print all of those. This is possible due to Arbitrary Arguments.
+
+def sum(*numbers):
+	sum=0
+	for i in numbers:
+		sum+=i
+	return sum
+
+When python sees * asterisks before a param, it gets the message that this method will accept multiple arguments, hence it will internally create a tuple and store all the arguments inside that tuple. Hence, this argument becomes an iterable.
+
+We can now send arguments separated by commas to sum
+
+x=sum(1, 2, 3, 4) // sum will return 10
+
+Global variable vs Local variable
+x = 5
+
+def sum(x):
+	y = 1
+	print(y+x)
+
+sum(x)
+print(x)
+
+The module will be loaded in the memory and a frame will be created with global variable x = 5 and function sum in it.
+
+When sum is called a separate frame is created in the stack, this will have the argument x = 5, and the local variable y = 1, it will print 6 
+
+After printing, the sum frame will be destroyed and finally the last line will print 5.
+The global x=5 was not altered because integers are immutable types, when x was passed to sum it created its own local variable x from the argument 5 in its frame, hence the global x was unaltered.
+
+def g(y):
+	print(x)
+	print(x+1)
+x=5
+g(x)
+print(x)
+
+g(5) frame will have create a local variable y=5
+It will print(x), but it does not have x, in this case the g function will access the global x and print 5
+Then it will also print x+1 or 6 by creating a new int object 6, since integer is immutable, the global value x=5 won’t change, a new object x+1 = 6 will be created.
+
+Finally the frame will be removed and in the global frame since there is print(x), x was unaltered hence 5 will be printed.
+
+def h(y):
+	x+=1
+x=5
+h(x)
+print(x)
+
+The above code will throw an error, because the function h is trying to modify a global variable, but we might be thinking since x is immutable why not create another object 6 and point x to it, but this is not possible, since it is a global variable other functions might also be using x, hence python does not allow changing of global variables.
+
+So we learnt,
+Global variables - variables in the global scope that can be accessed by any function, class or a variable and anywhere in a module.
+Local variable - variables in the local scope only accessible inside a function, gets destroyed when the function is done executing.
+A function can use a global variable but it cannot alter the global variable.
+
+def h(y):
+	global x
+	x+=1
+	print(x)
+
+x=5
+h(x)
+print(x)
+
+Even though it is a bad practice, python has still provided a way to change the global variable by using the global keyword.
+
+Nested Functions:
+def f():
+	print(“inside f”)
+	def g():
+		print(“inside g”)
+		f()
+	g()
+
+f() // This will take us in an infinite loop
+f() → g() → f() → g() →  f() → g(), the interpreter will end this loop as there is a set limit on how many function calls can exist inside a call stack.
+
+Also the inner function g() can’t be called from the global scope.
+
+Note:
+Everything in Python is objects
+Functions are also objects, to prove this
+def f(num):
+	return num**2
+
+x=f
+x(2) → this will print 4, because since everything in python is an object x can point to a function f which is an object, hence now x is also a function.
+
+We can also del a function i.e. we can remove references to it and the GC will eventually remove it when there are no references.
+
+def num(x):
+	print(x)
+
+x = num
+
+del num
+x(5) // this will print 5, because x is pointing to the function object num
+There were 2 pointers pointing towards num object, num and x, num got deleted and x is still pointing towards num and keeping it alive in the memory. 
+Since num is the name of the function it is also the identifier hence it points to the function object taking in x.
+
+Since function is also an object we can also store it in a list, tuple etc
+def g(y):
+    return y**2
+
+t = (1, 2, 3, g(2))
+
+print(t) → (1, 2, 3, 4)
+
+So we can,
+Rename a function
+Delete a function
+Storing a function
+Returning a function
+Function as an argument
+
+Function as an argument
+def func_a():
+	print(“inside func_a”)
+
+def func_c(z):
+	print(“inside func_c”)
+	return z()
+
+print(func_c(func_a))
+Since func_c is called “inside func_c” will be printed, 
+func_c after printing will return but first will call z(), z is func_a, so “inside func_a” will be printed.
+def f():
+	def x(a, b):
+		return a + b
+	return x
+
+val = f()(2, 3)
+print(val)
+f() is called
+f will return x which is a function
+now to that return function we pass 2 and 3 and also call it
+this function will return a+b = 5
+
+We can also write this as,
+val = f()
+x = val(2, 3)
+print(x)
+
+Since, f returns a function object, val will store that, now we can pass 2 and 3 to value.
+
+Benefits of using a function:
+Code mularity
+Write once use forever
+Improves Code readability
+
+
 
 
 
