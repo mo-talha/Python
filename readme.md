@@ -930,8 +930,10 @@ sum(2, 3), 2 and 3 are arguments, the values passed to params are called argumen
 
 1. Default Arguments
 When defining a function we can set default values to the params of a function, ex:
+```
 def power(a=1, b=1):
 	return a**b
+```
 
 How does this help ?
 Let's say someone just called the function with no arguments or a single argument
@@ -953,14 +955,16 @@ Even though if we take according to the position we are sending 2 at a and 3 at 
 
 This is called Keyword argument, it is prioritized over positional arguments. These can be used when we have a function which has a lot of params but we don’t remember the positions of each param, we only remember names, then we can use this method.
 
-4, Arbitrary Arguments
+4. Arbitrary Arguments
 Print function can take in multiple arguments separated by commas and it will print all of those. This is possible due to Arbitrary Arguments.
 
+```
 def sum(*numbers):
 	sum=0
 	for i in numbers:
 		sum+=i
 	return sum
+```
 
 When python sees * asterisks before a param, it gets the message that this method will accept multiple arguments, hence it will internally create a tuple and store all the arguments inside that tuple. Hence, this argument becomes an iterable.
 
@@ -968,7 +972,8 @@ We can now send arguments separated by commas to sum
 
 x=sum(1, 2, 3, 4) // sum will return 10
 
-Global variable vs Local variable
+### Global variable vs Local variable
+```
 x = 5
 
 def sum(x):
@@ -977,6 +982,7 @@ def sum(x):
 
 sum(x)
 print(x)
+```
 
 The module will be loaded in the memory and a frame will be created with global variable x = 5 and function sum in it.
 
@@ -985,12 +991,14 @@ When sum is called a separate frame is created in the stack, this will have the 
 After printing, the sum frame will be destroyed and finally the last line will print 5.
 The global x=5 was not altered because integers are immutable types, when x was passed to sum it created its own local variable x from the argument 5 in its frame, hence the global x was unaltered.
 
+```
 def g(y):
 	print(x)
 	print(x+1)
 x=5
 g(x)
 print(x)
+```
 
 g(5) frame will have create a local variable y=5
 It will print(x), but it does not have x, in this case the g function will access the global x and print 5
@@ -998,19 +1006,22 @@ Then it will also print x+1 or 6 by creating a new int object 6, since integer i
 
 Finally the frame will be removed and in the global frame since there is print(x), x was unaltered hence 5 will be printed.
 
+```
 def h(y):
 	x+=1
 x=5
 h(x)
 print(x)
+```
 
 The above code will throw an error, because the function h is trying to modify a global variable, but we might be thinking since x is immutable why not create another object 6 and point x to it, but this is not possible, since it is a global variable other functions might also be using x, hence python does not allow changing of global variables.
 
 So we learnt,
 Global variables - variables in the global scope that can be accessed by any function, class or a variable and anywhere in a module.
 Local variable - variables in the local scope only accessible inside a function, gets destroyed when the function is done executing.
-A function can use a global variable but it cannot alter the global variable.
+***A function can use a global variable but it cannot alter the global variable.***
 
+```
 def h(y):
 	global x
 	x+=1
@@ -1019,23 +1030,26 @@ def h(y):
 x=5
 h(x)
 print(x)
+```
 
-Even though it is a bad practice, python has still provided a way to change the global variable by using the global keyword.
+***Even though it is a bad practice, python has still provided a way to change the global variable by using the global keyword.***
 
-Nested Functions:
+### Nested Functions
+```
 def f():
 	print(“inside f”)
 	def g():
 		print(“inside g”)
 		f()
 	g()
+```
 
 f() // This will take us in an infinite loop
 f() → g() → f() → g() →  f() → g(), the interpreter will end this loop as there is a set limit on how many function calls can exist inside a call stack.
 
 Also the inner function g() can’t be called from the global scope.
 
-Note:
+### Note:
 Everything in Python is objects
 Functions are also objects, to prove this
 def f(num):
@@ -1046,32 +1060,39 @@ x(2) → this will print 4, because since everything in python is an object x ca
 
 We can also del a function i.e. we can remove references to it and the GC will eventually remove it when there are no references.
 
+```
 def num(x):
 	print(x)
 
 x = num
 
 del num
-x(5) // this will print 5, because x is pointing to the function object num
+x(5) 
+```
+
+this will print 5, because x is pointing to the function object num
 There were 2 pointers pointing towards num object, num and x, num got deleted and x is still pointing towards num and keeping it alive in the memory. 
 Since num is the name of the function it is also the identifier hence it points to the function object taking in x.
 
-Since function is also an object we can also store it in a list, tuple etc
+### Since function is also an object we can also store it in a list, tuple etc
+```
 def g(y):
     return y**2
 
 t = (1, 2, 3, g(2))
 
 print(t) → (1, 2, 3, 4)
+```
 
 So we can,
-Rename a function
-Delete a function
-Storing a function
-Returning a function
-Function as an argument
+1. Rename a function
+2. Delete a function
+3. Storing a function
+4. Returning a function
+5. Function as an argument
 
-Function as an argument
+### Function as an argument
+```
 def func_a():
 	print(“inside func_a”)
 
@@ -1080,8 +1101,12 @@ def func_c(z):
 	return z()
 
 print(func_c(func_a))
+```
+
 Since func_c is called “inside func_c” will be printed, 
 func_c after printing will return but first will call z(), z is func_a, so “inside func_a” will be printed.
+
+```
 def f():
 	def x(a, b):
 		return a + b
@@ -1089,6 +1114,8 @@ def f():
 
 val = f()(2, 3)
 print(val)
+```
+
 f() is called
 f will return x which is a function
 now to that return function we pass 2 and 3 and also call it
@@ -1101,10 +1128,10 @@ print(x)
 
 Since, f returns a function object, val will store that, now we can pass 2 and 3 to value.
 
-Benefits of using a function:
-Code mularity
-Write once use forever
-Improves Code readability
+### Benefits of using a function:
+1. Code mularity
+2. Write once use forever
+3. Improves Code readability
 
 
 
