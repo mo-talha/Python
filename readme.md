@@ -1556,7 +1556,7 @@ print(x+y)
 ### Encapsulation
 We have to make sure when designing a class that data or properties of that class are hidden, hiding of properties of a class is called encapsulation.
 
-Why do we need encapsulation ?
+### Why do we need encapsulation ?
 Without encapsulation anyone can access any property of an object and make changes to it, this can lead to problems, we will have some fields which cannot be altered or updated to any random value, hence to make sure that this does not happen we implement encapsulation.
 
 In the above Atm class example, we had props like pin and balance, now anyone can access the pin and balance of object sbi by just doing sbi followed by dot (sbi.) We need to hide these properties as they are sensitive. Anyone can create a mess by accessing the balance property and entering a string, to avoid this we can hide these properties.
@@ -1566,6 +1566,7 @@ To hide a property or a method we can use __ (double underscore) at the start of
 The properties and methods with double underscore will be accessible within the class, but will be hidden outside the class.
 
 ex:
+```
 class Atm:
 	def __init__(self):
 		self.__pin = “”
@@ -1579,12 +1580,14 @@ class Atm:
 		// code
 
 sbi = Atm()
-sbi. // (the list will show only deposit method, pin, balance and menu won’t appear)
+```
+`sbi. // (the list will show only deposit method, pin, balance and menu won’t appear)`
 
 A similar concept is available in Java called access modifiers. These are keywords like public, private and protected. To make properties or methods private we can use the private keyword and the property and method won’t be accessible outside the class.
 But in python nothing is truly private, meaning even though the double underscored properties and methods are hidden they can still be accessed.
 
-Understanding what double underscore does internally:
+### Understanding what double underscore or Name mangling does internally
+```
 class Atm:
 	def __init__(self):
 		self.__pin = “”
@@ -1593,6 +1596,8 @@ class Atm:
 	def check_balance(self):
 		print(self.__balance)
 sbi = Atm()
+```
+
 Now, internally python will create 2 variables for object sbi _Atm__pin, and _Atm__balance these will be same as __pin and __balance, now wherever there is self.__balance or self.__pin it is actually _Atm__pin, _Atm__balance internally in memory.
 
 Still one can access the balance and set a value by doing
@@ -1602,7 +1607,12 @@ But one can directly access sbi._Atm__balance and alter or update the balance th
 
 But the general understanding is that someone interacting with python must have the common sense that properties or methods with __ double underscore are private and should not be interacted with.
 
-Getters and Setters
+Also ***Name Mangling*** helps in avoiding overriding crucial properties as internally python stores sbi.__balance as sbi._atm__balance.
+
+### Single Underscore before attribute and methods names
+Single underscore indicates that it is a private attribute or method, but it does not enforce privacy like Name Mangling by creating a separate attribute name instead it is a strong convention that we should not access it. 
+
+### Getters and Setters
 We saw how to hide properties, but hiding the property solves one problem that no one will be able to play with the properties. 
 But this raises another problem, if the attribute itself is hidden how is the user going to set the pin and when the user forgets the pin how will he be able to view it. This is where getters and setters come into picture.
 
@@ -1611,6 +1621,7 @@ Setter is a method to set a value of the attribute, we might think what’s the 
 There is advantage of using a setter, when the attribute was public i.e. accessible to anyone, they were able to give any value to the attribute, but with the help of setter method we can now give the ability to set the value of an attribute but also control what type of value will be allowed for a particular attribute.
 
 With the help of setter we can make sure that the pin is a 4 digit number only,
+```
 class Atm:
 	def __init__(self):
 		self.__pin = “”
@@ -1625,18 +1636,21 @@ class Atm:
 			self.__pin = new_pin
 		else:
 			print(“Invalid Pin”)
+```
 
 So Encapsulation is the method of bundling attributes and methods together and hiding sensitive data and giving a controlled access to it.
 
-Reference Variable
+### Reference Variable
 We can create an object by just doing,
 Atm(), but this object will be lost in the memory because we did not store it.
 
 sbi = Atm(), now sbi holds the reference to the memory address where the object of Atm() is created, hence it is called a reference variable. sbi is a reference variable not the object.
 
-Passing an object of a user defined class as an argument
+### Passing an object of a user defined class as an argument
 In python where we can pass an int, a list, a tuple etc into a function, similarly we can also pass an object of our very own defined class.
 ex: Let’s create a customer class.
+
+```
 class Customer:
     def __init__(self, name, gender):
         self.name = name
@@ -1652,14 +1666,16 @@ rohit = Customer("Rohit", "Male")
 ankita = Customer("Ankita", "Female")
 greet(rohit)
 greet(ankita)
+```
 
 We can pass the objects rohit and ankita to the method greet and use their attributes inside the greet function.
 When we pass the object rohit or ankita to greet, w.k.t rohit or ankita is the reference variable which is holding the address of Customer object inside the memory. Now since we do greet(rohit) this is called pass by reference because we are sending the reference variable to greet.
 
 Now in this Customer object will have 2 pointers 1 from rohit and another from greet, now any changes made to the attributes of rohit inside the greet function these changes are done on the same object which rohit is pointing towards, because both greet and rohit point to the same object in memory.
 
-Hence, we can say that user defined classes are mutable just like lists, sets, dictionaries etc, changes will be made on the same object, any change will not result in creation of a new object like in case of a string, tuple etc.
+***Hence, we can say that user defined classes are mutable just like lists, sets, dictionaries etc, changes will be made on the same object, any change will not result in creation of a new object like in case of a string, tuple etc.***
 
+```
 class Customer:
     def __init__(self, name):
         self.name = name
@@ -1669,32 +1685,35 @@ def greet(Customer):
         
 rohit = Customer("Rohit")
 greet(rohit)
-print(rohit.name) // this will print “Talha” because the greet function updates the name attribute of the same object as rohit is pointing to.
+print(rohit.name)
+```
+ this will print “Talha” because the greet function updates the name attribute of the same object as rohit is pointing to.
 
 So if we send mutable data types like objects of user defined classes, lists, sets, dictionaries etc using pass by reference then any modifications inside that function will lead to the modification in the original object, hence it is better to send a copy or a clone of the original, this way the original object will be safe from any changes.
 
-This is not the case with immutable types like int, string, tuple etc.
+***This is not the case with immutable types like int, string, tuple etc.***
 
-Instance Variables and Class or Static Variables:
+### Instance Variables and Class or Static Variables
 Instance variables are variables that belong to an object and are only accessible via an object. Instance variables are different for each object.
 Instance variables are written inside the constructor.
 
 Static variables are variables that belong to a class and are accessible via the class. Static variables are the same for every object of that class.
 Static variables are written outside the constructor.
 
-Static Methods:
+### Static Methods
 Static methods belong to a class, unlike instance methods which belong to an object.
 
 The static variables and methods are accessible without the creation of an object of that class as they belong to a class and not an object or an instance.
 
 Static methods are written without the self param because they don’t require an object.
 
-When do we use static variables or methods ?
+### When do we use static variables or methods ?
 Static variables and methods are used when they are required across all the objects or are required at the class level, mostly utility methods are static methods like len() etc.
 
 Let's consider the Atm class example, let's say we have to keep a count of the number of objects that have been created of class Atm,
 
 If we take a variable counter to keep a count of the objects, lets say we use it as an instance variable then,
+```
 class Atm:
 	def __init__(self):
 		self.pin = “”
@@ -1704,22 +1723,25 @@ class Atm:
 sbi = Atm()
 hdfc = Atm()
 canara = Atm()
+```
 
 Since count is an instance variable, for every object a count variable will be created whose value will be 1 and not 3, because for every new object new variables will be created.
 
 To solve this problem we can use a static variable, this way the count will be universal for every object and specific to each object.
 
+```
 class Atm:
 	counter = 1
 	def __init__(self):
 		self.pin = “”
 		self.balance = 0
 		self.slno = counter
-Atm.counter = Atm.counter+1 # to access a class or static variable or method we use class name followed by dot (Atm.)
+        Atm.counter = Atm.counter+1 `# to access a class or static variable or method we use class name followed by dot (Atm.)`
 
 c1 = Atm() // the object will be initialized for c1 with pin, balance =0 and counter = 1, at the same time counter will be increased by 1, making the counter = 2
 c2 = Atm() // the object for c2 will be initialized and this time c2’s slno will be 2 and counter will be 3
 c3 = Atm() // the object for c3 will be initialized and this time c3’s slno will be 3 and counter will be 4
+```
 
 So, static variables are used when we need a field that will be common among all the objects, like in case of class Student, the school name can be kept as a static variable as it will be common among all the students.
 
@@ -1729,6 +1751,7 @@ We will also implement getter and setter for class or static variables as well b
 
 First we make the class variables private by introducing a double underscore in the identifier and then write getter and setter for it.
 
+```
 class Atm:
     __counter = 1
     
@@ -1756,23 +1779,27 @@ c3 = Atm()
 print(c3.slno)
 
 print(Atm.get_counter())
+```
 
 We can observe that set_counter and get_counter don’t have self as the param, since these are static_methods, self or object is not required to access them, they can be accessed via the class.
 
 We also use the @staticmethod annotation on top of the static methods to indicate that it's a static method, and let the user know that an object is not necessary to access such a method.
 
-Relationship b/w classes
-There are 2 kinds of relationships among classes:
-Aggregation - has a relation
-Inheritance - is a relation
+### Relationship b/w classes
+### There are 2 kinds of relationships among classes:
+- Aggregation - has a relation
+- Inheritance - is a relation
 
-Aggregation
+### Aggregation
 We have a class customer and another class address. We know that every customer will have an address, hence the relationship b/w customer and address class is customer has a address.
 
- 
+![Immutable and Mutable types](images/aggregation_inheritance.png)
+
 Since the Customer class needs or depends on Address class, this relation or dependency is called aggregation.
 
 In a customer class we can have address like this,
+
+```
 class Customer:
 	def __init__(self, name, gender, city, pin_code, state):
 		self.name = name
@@ -1780,9 +1807,11 @@ class Customer:
 		self.city = city
 		self.pin_code = pin_code
 		self.state = state
+```
 
 But we can notice an issue there is code repetition here, whenever a new customer is created all these fields should be entered, since address is common among all the customers we can create a separate class for it, and when creating a customer class object, we will also create an address class object and pass the address class to the customer class.
 
+```
 class Customer:
 	def __init__(self, name, gender, address):
 		self.name = name
@@ -1805,17 +1834,18 @@ class Address:
 
 address1 = Address(“Bengaluru”, 560084, “Karnataka”)
 customer1 = Customer(“Talha”, “Male”, address1)
+```
 
 Now we can access the address of customer1 by,
-print(customer1.address.city) # Since the address attribute of the customer class has the address1 object we can pick any attribute from the address object like city, pincode and state.
+`print(customer1.address.city) # Since the address attribute of the customer class has the address1 object we can pick any attribute from the address object like city, pincode and state.`
 
 If we want to update the address,
 customer1.update_address(“Riyadh”, 111078, “Saudi Arabia”)
 
-Inheritance
+### Inheritance
 Inheritance is the concept of a child class inheriting from its parent class. Similar to the real world where a man inherits wealth from his father, or a man inherits genetics from his father, a class can also inherit from a parent class.
 
-Why do we need inheritance ?
+### Why do we need inheritance ?
 Inheritance helps us in avoiding writing repetitive code or helps in implementing the DRY principle of coding. DRY means (Do Not Repeat Yourself)
 
 Ex: Let’s say we design a platform like Udemy, it will have 2 main entities a Student and a Creator
@@ -1838,15 +1868,15 @@ This is called inheritance.
 
 Inheritance always comes down from parent to child or top to bottom. A parent class cannot inherit the child class.
 
-What all can a child class access from the parent class ?
+### What all can a child class access from the parent class ?
 The child class can access:
-Attributes
-Methods
-Constructor
+- Attributes
+- Methods
+- Constructor
 
 It cannot access private attributes and methods of the parent class.
 
-
+![Inheritance](images/inheritance.png)
 
 Inheritance is represented by an arrow, the arrow will point towards the parent class from the child class.
 Aggregation is represented by a diamond, the diamond will point towards the dependent class.
@@ -1855,11 +1885,11 @@ Inheritance is also called is-a relationship, Student is a child of User.
 
 Also if a child class has no constructor then the interpreter will run its parent class’s constructor.
 
-Default constructor
+### Default constructor
 If a class has no __init__ implementation, then a default constructor will be run by the python method when an object of that class is created, a default constructor is always present, it's just that it’s hidden.
 
 Any implementation of __init__ method will override the default constructor.
-
+```
 class Parent:
      def __init__(self):
          print("Inside Parent Constructor")
@@ -1870,13 +1900,14 @@ class Child(Parent):
 
 c1 = Child()
 print(type(c1))
-
+```
 Here the interpreter will run the __init__ method of Parent when initializing the c1 object.
 
-Polymorphism
-Method Overriding
+### Polymorphism
+### 1. Method Overriding
 A child class implementing its own version of inherited method is called method overriding.
 Ex:
+```
 class Animal:
 	def make_sound():
 		pass
@@ -1884,10 +1915,12 @@ class Animal:
 class Dog(Animal):
 	def make_sound():
 		print(“Woof”)
+```
 
 Here, the dog implements its own version of sound, hence this is called overriding a method.
 
-Code Snippets to test concepts
+### Code Snippets to test concepts
+```
 class Parent:
 	def __init__(self, num):
 		self.__num = num
@@ -1901,13 +1934,14 @@ class Child(Parent):
 son = Child(100)
 print(son.get_num())
 son.show()
-
+```
 Since child class does not have any constructor, the parent's constructor will be invoked and 100 will be passed to the constructor of the parent.
 
 The parent constructor will initialize the __num variable with 100
 
 Now, since son inherits the parent class, hence it can access its method get_num(), so 100 will be printed and finally the show() method of son will be executed.
 
+```
 class Parent:
 	def __init__(self, num):
 		self.__num = num
@@ -1925,35 +1959,40 @@ class Child(Parent):
 son = Child(100, 10)
 print(“Parent num:”, son.get_num())
 print(“Child Val:”, son.get_val())
+```
 
 The above code will throw an error that, son does not have method get_num() because,
 Child class has its own constructor, so the Parent constructor won’t be invoked, since the parent constructor is not invoked the parent object won’t be created hence the child class won’t have the get_num() method.
 
-So we know from this is, if the Child class has its own constructor the Parents constructor won’t be invoked.
+***So we know from this, if the Child class has its own constructor the Parents constructor won’t be invoked.***
 
+```
 class A:
 	def __init__(self):
 		self.var1 = 100
 
 	def display1(self, var1):
 		print(“Class A:”, self.var1)
+
 class B(A):
 	def display2(self, var1):
 		print(“Class B:”, self.var1)
 
 obj = B()
 obj.display1(200)
+```
 
 Since class B does not have its own constructor, the parent class A’s constructor is called and var1 is initialized to 100
 diplay1 of class A is called by obj and 200 is passed, display1 will print 100 and not 200, because display1 is printing self.var1, but 200 is the local variable of method display1 here the obj’s var1 was used not the display1’s var1.
 
 If display1’s var1 was used then code would have been, print(“Class A:”, var1)
 
-Super keyword
+### Super keyword
 Super keyword is used to access the parent class’s methods and the constructor. We cannot access the attributes of the parent class with super. Only methods and the constructor.
 
 The super keyword won’t work outside the child class, it must be used within the child class.
 
+```
 class Phone:
 	def __init__(self, price, brand, camera):
 		print(“Inside phone constructor”)
@@ -1971,14 +2010,17 @@ class SmartPhone(Phone):
 
 s = SmartPhone(20000, “Apple”, 13)
 s.buy()
+```
 
 First the Phone or Parent class constructor will be called since SmartPhone does not have a constructor and an object of SmartPhone will be initialized.
 Then the buy() method of SmartPhone will be invoked and “Buying Smartphone” will be printed
 Then with the help of super() keyword buy() method of parent class will be invoked and “Buying a phone” will be printed.
 We cannot do
-s.super().buy() // this will not work, super outside the child class cannot be used.
 
-Example of why Super keyword is useful:
+`s.super().buy() // this will not work, super outside the child class cannot be used.`
+
+### Example of why Super keyword is useful:
+```
 class Phone:
 	def __init__(self, price, brand, camera):
 		self.price = price
@@ -1991,67 +2033,76 @@ class SmartPhone(Phone):
 		self.os = os
 		self.ram = ram
 s = SmartPhone(10000, “samsung”, 13, “Android”, 6)
+```
 
 So, here since every Phone will have a price, brand and name the child class borrows this from the parent class Phone. The SmartPhone class will implement its own features like os and ram.
 So to satisfy this dependency, SmartPhone class uses the super keyword and initializes the common attributes via the parent constructor and implements its own features or attributes separately.
 
-Also if super needs to be used then it must be the 1st statement inside the child constructor, otherwise it won’t work elsewhere.
+***Also if super needs to be used then it must be the 1st statement inside the child constructor, otherwise it won’t work elsewhere.***
 
-Another example of super:
+### Another example of super:
+```
 class Parent:
 	def __init__(self):
-self.num = 100
+        self.num = 100
 
 class Child(Parent):
-def __init__(self): 
+    def __init__(self): 
 		super().__init__()
 		self.var=200
+
 	def show(self):
 		print(self.num)
 		print(self.var)
 
 son = Child()
 son.show()
+```
 
 Here we are invoking the Child class constructor by creating the object son, the Child constructor invokes, the parent constructor with super(), num in super gets initialized to 100, then var in child gets initialized to 200.
 Finally we call show this will print 100 and 200, this happens because what is self, self is son and son’s parent class Parent is initialized and now son can access parents attributes, hence it is able to access num and print it.
 
-Method Overloading
+### Method Overloading
 Method overloading is having multiple methods with the same method definition but different behaviour. Basically the method names will be the same but the no of params will differ.
 ex:
+```
 class Math:
 	def sum(self, a, b):
 		return a + b
 	
 	def sum(self, a, b, c):
 		return a + b + c
+```
+
 Technically the above example is method overloading, where depending on the number of arguments sent the right method will be picked, but this way of overloading methods is not possible in python.
 
 The pythonic way will be to use only one method and write if conditions inside it to return the proper result based on the arguments.
-
+```
 class Math:
 	def sum(self, a, b, c=0):
 		if (c == 0):
 			return a + b
 		else:
 			return a + b + c
+```
 Now, when we send only 2 numbers to sum, a+b will be returned because c is 0, if we send 3 numbers then a + b + c will be returned because c is not 0.
 
-Operator Overloading:
+### Operator Overloading
 We have operators like +, -, * etc these are usually used b/w 2 numbers to perform a certain operation like addition, subtraction and multiplication etc.
 But we know that “Hello” + “World” also works . It concatenates the 2 strings to create a new one, the creator of the string class changed how the + operator works in case of strings, this is called operator overloading.
 We also implemented operator overloading in our fraction class where we overloaded the __add__ method to make addition of 2 fractions. 
 Operator overloading is done by changing the behaviour of the magic methods or overriding the magic methods like __add__, __sub__ etc
 
-Inheritance
-Types of Inheritance:
-Single Level Inheritance
-Multilevel Inheritance
-Hierarchical Inheritance
-Multiple Inheritance
-Hybrid Inheritance
+### Inheritance
+### Types of Inheritance:
+1. Single Level Inheritance
+2. Multilevel Inheritance
+3. Hierarchical Inheritance
+4. Multiple Inheritance
+5. Hybrid Inheritance
 
 1. Single Level Inheritance - A Child class Inheriting from a Parent class.
+```
 class Parent:
     def eyeColor(self):
         print("Parents Eye Color")
@@ -2062,8 +2113,10 @@ class Child(Parent):
 
 c1 = Child()
 c1.eyeColor()
+```
 
 2. Multilevel Inheritance - A Child class inheriting from a Parent class and Parent class inheriting from the Grand Parent class.
+```
 class GrandParent:
     def iam_tall(self):
         print("Grand Parent is Tall")
@@ -2079,9 +2132,6 @@ class Child(Parent):
 c1 = Child()
 c1.eyeColor()
 c1.iam_tall()
-
-
-
 
 class A:
     def m1(self):
@@ -2103,11 +2153,13 @@ obj2 = B()
 obj3 = C()
 
 print(obj1.m1() + obj3.m1() + obj3.m2())
-
+```
 20 will be returned from m1 of class A, then since obj3 or class C does not have m1 it will 
 get m1 from its one level above i.e. class B because class B has it and finally m2 of obj3 will be added
 
 3. Hierarchical Inheritance - Two or more subclasses inheriting from a single Parent class.
+
+```
 class Animal:
     def makes_sound(self):
         print("Animal Makes Sound")
@@ -2115,7 +2167,6 @@ class Animal:
 class Cat(Animal):
     def makes_sound(self):
         print("Meow")
-
 
 class Dog(Animal):
     def makes_sound(self):
@@ -2125,10 +2176,11 @@ cat = Cat()
 cat.makes_sound()
 dog = Dog()
 dog.makes_sound()
-
+```
 We can see both cat and dog inheriting from parent class Animal
 
 4. Multiple Inheritance - A subclass inheriting from 2 or more Parent classes, ex a child inheriting both from father and mother.
+```
 class Camera:
     def click_picture(self):
         print("I can click pictures")
@@ -2152,6 +2204,7 @@ apple = SmartPhone()
 apple.power_on()
 apple.click_picture()
 apple.make_call()
+```
 
 In the above example we have a Camera class, a Phone class and a SmartPhone class, SmartPhone class extends both Camera and Phone class as it can both click pictures and make phone calls.
 
@@ -2162,7 +2215,7 @@ Since the SmartPhone class has a power_on method it will override both the Paren
 
 5. Hybrid Inheritance - A subclass whose inheritance is a mix of Single Level, Multiple and Hierarchical.
 
-Abstraction
+### Abstraction
 Abstraction is hiding implementation details and exposing only necessary behaviour. It is also a way of enforcing certain conditions on the dependent class.
 
 ex: class Car will have power on, accelerate, decelerate, break etc now the extending car bmw, audi, toyota etc must implement these essential behaviors as it belongs to the car class family and bmw can implement any other features or behaviour like air bags, hydraulic suspensions etc on its own.
