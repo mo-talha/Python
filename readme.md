@@ -1301,8 +1301,9 @@ It - 3, 56 & 22, it will keep 56 and reduce the l1 to [56, 57, 58]
 It - 4, 56 & 57, it will keep 57 and reduce the l1 to [57, 58]
 It - 5, 57 & 58, it will keep 58 and reduce the l1 to [58]
 
-It will return 58, but it will not modify the given array, it maintains two variables x and y, x being an accumulator and y
-being the next value. It compares y or next value with accumulator x and in this case if next value is greater than accumulator
+It will return 58, but it will not modify the given array, it iterates over the given iterable maintains two variables x and y, x being an accumulator and y being the next value. 
+
+It compares y or next value with accumulator x and in this case if next value is greater than accumulator
 it reassigns the accumulator to the next value or if the next value is smaller it leaves the accumulator as it is and finally
 returns the single value.
 
@@ -1331,6 +1332,8 @@ To be done...
 4. How do lambda functions help in higher order functions ?
 5. What are inbuilt higher order functions ?
 6. What is list comprehension and dict comprehension ?
+
+
 
 
 
