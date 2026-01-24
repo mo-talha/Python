@@ -1333,6 +1333,934 @@ To be done...
 5. What are inbuilt higher order functions ?
 6. What is list comprehension and dict comprehension ?
 
+## Lecture - 32
+### Object Oriented Programming (OOP)
+
+### What is a class ?
+A class is a blueprint to create an object.
+A class consists of properties and methods, properties are data and methods are behaviour.
+Properties are kept private and methods are kept public.
+
+### What is an object ?
+An object is an instance of a class.
+Everything in python is an object, meaning it is an instance of a class.
+a=2, this a is pointing to an object of class int.
+l = [1, 2, 3] l is pointing to an object of the class list.
+
+
+### Naming convention of a class, methods and properties
+Classes are named in Pascal's case. ex: ThisIsAClass
+Methods and properties are named in snake cases. full_name, get_balance() etc
+
+### Difference b/w function and methods 
+Methods are also functions but they are written inside a class and functions are methods which are written outside a class.
+
+Functions are accessible to every object.
+A method of a class is only accessible to the object of that class.
+ex:
+```
+l = [1, 2, 3]
+len(l) → len is a function 
+l.append(1) → append is a method of the class list
+```
+
+len can be called like this len(), but append can only be called with reference to a list object as shown above.
+
+### Creating an ATM machine using OOPs:
+```
+class Atm:
+	def __init__(self):
+		self.pin = “”
+		self.balance = 0
+
+		self.menu()
+	
+	def menu(self):	
+```
+
+### Constructor (__init__) 
+A constructor is a special method inside a class, it gets called and the code inside it gets executed whenever an object of that class is created.
+The properties of a class must be written inside the __init__ method in python.
+
+The name of the constructor method in python for any or every class must be __init__.
+
+Now, when an object of class Atm is created, the constructor method will run and the values for properties pin and balance will be initialized in the memory.
+
+### What are special methods,  magic methods, dunder methods ?
+These are predefined methods in python that are called automatically by the interpreter, there are a set number of these methods, we cannot define our own magic, special or dunder method. They start with a double underscore and end with a double underscore.
+
+A constructor is also a special method.
+
+### What is the advantage of a constructor ?
+A constructor runs automatically when an object of a class is created, it initializes the object in the memory with predefined values for its properties.
+It is used to initialize things which a user cannot control.
+
+ex: 
+sbi = Atm(), if we do sbi. we will be able to see all the methods of class Atm available to the object sbi, but the constructor is not available. Because a constructor is not called by the object, but it is called automatically by the interpreter.
+
+Let’s say we create a cab booking app, when a person turns on the app on his mobile phone, the person should not be asked to turn on the internet to use the app.
+This kind of configuration where the app automatically connects to the internet etc is written inside the constructor.
+
+```
+class Atm:
+    def __init__(self):
+        self.pin = ""
+        self.balance = 0
+        self.menu()
+        
+    def menu(self):
+        user_input = input("""
+            Hello, how would you like to proceed ?
+            1. Enter 1 to create a pin.
+            2. Enter 2 to deposit.
+            3. Enter 3 to withdraw.
+            4. Enter 4 to check balance.
+            5. Enter 5 to exit.
+        """)
+        if user_input == "1":
+            self.create_pin()
+        elif user_input == "2":
+            self.deposit()
+        elif user_input == "3":
+            self.withdraw()
+        elif user_input == "4":
+            self.check_balance()
+        else:
+            print("Bye")
+            
+    def create_pin(self):
+        self.pin = input("Enter your pin: ")
+        print("Pin Set Successfully")
+        
+    def deposit(self):
+        temp = input("Enter your pin: ")
+        if temp == self.pin:
+            amount = int(input("Enter the amount: "))
+            self.balance+=amount
+            print("Deposit Successful")
+        else:
+            print("Invalid Pin")
+            
+    def withdraw(self):
+        temp = input("Enter Your Pin: ")
+        if temp == self.pin:
+            amount = int(input("Enter the amount: "))
+            if amount <= self.balance:
+                self.balance-=amount
+                print("Operation Successful")
+            else:
+                print("Insufficient Funds")
+        else:
+            print("Invalid Pin")
+            
+    def check_balance(self):
+        temp = input("Enter Your Pin: ")
+        if temp == self.pin:
+            print("Your balance is: ",self.balance)
+        else:
+            print("Invalid Pin")
+```
+
+### What is the __new__() method ?
+It creates an object of a class and __init__() initializes the properties for that object.
+
+### What is the self keyword ?
+self refers to the current instance or object that is calling the method.
+ex: `sbi = Atm()`, now self is nothing but sbi which is calling the init method of the Atm class, python automatically passes the object sbi to the `__init__` method, internally it is `Atm.__init__(sbi)`.
+
+So internally the constructor will initialize the default values of sbi.pin and sbi.balance for object sbi, as sbi is the one in place of self.
+```
+def __init__(self):
+	self.pin = “”
+	self.balance = 0
+```
+The __init__ method initializes the object sbi and sets sbi.pin = “” and sbi.balance = 0.
+
+### Why do we need self ?
+In OOP the rule is that properties, methods inside a class can only be accessed by an object.
+
+That’s why in the above example we do self.pin, self.balance and self.menu()
+
+When we do sbi.check_balance() → internally check_balance is 
+```
+def check_balance(self):
+        temp = input("Enter Your Pin: ")
+        if temp == self.pin:
+            print("Your balance is: ",self.balance)
+        else:
+            print("Invalid Pin")
+```
+
+Now when we do `sbi.check_balance()` → python internally passes sbi in check_balance(sbi) and the self becomes sbi, now `temp == self.pin`, is actually `temp == sbi.pin`, checking in the pin property of sbi object in the memory.
+
+Hence, we abide by the rule that ***properties and methods can only be accessed by objects***, self gives us the way to do that as we saw above how self helped us in checking the pin of sbi.
+
+If a method in the class does not have self as its param, then interpreter will throw an error saying ***check_balance has 0 positional arguments but 1 argument is passed***.
+Ex:
+```
+class Atm:
+	def check_balance():
+		// code
+
+sbi = Atm()
+```
+
+`sbi.check_balance()` → Now the above error will be thrown because check_balance does not have self, why because, w.k.t python by default passes sbi or object to check_balance when we call a method it does that because methods and properties can only be accessed by objects but check_balance has no params but an argument i.e. the object was passed hence we get that error.
+
+So, 
+- Properties and methods of a class can only be accessed by objects.
+- Self refers to the object which calls the constructor method of a class by creating an object of that class.
+- Python by default sends the object that is calling the method as an argument to the methods of a class, so self is required. ex: sbi.check_balance() sbi is the object that python sends to check_balance but it happens behind the scenes.
+
+### How does addition (+), multiplication (*) operations work on a class like list ?
+There are special methods like `__add__()`, `__mul__()` etc which can be implemented inside a class, these methods are invoked by the interpreter automatically, when it sees any +, * operation b/w the objects of a class.
+
+Ex: if we create 2 objects l1 and l2 of class list, we can concat these 2 lists using the + operator b/w the 2 objects, this means the creator of the list class has implemented the `__add__` method inside the class.
+```
+l1 = [1, 2, 3]
+l2 = [4, 5, 6]
+print(l1+l2) 
+```
+`the + operation will trigger the __add__ method and we see a concatenated list consisting of both l1 and l2`.
+
+Similarly we can create our own data type for fraction numbers, where we can print a fraction, add 2 fractions, subtract 2 fractions, multiply, divide etc
+```
+class Fraction:
+	def __init__(self, num, deno):
+		self.num = num
+		self.deno = deno
+	
+	def __str__(self):
+		return “{}/{}”.format(self.num, self.deno)
+	
+	# adding 2 fractions
+	def __add__(self, other):
+		temp_num = self.num * other.deno + other.num * self.deno
+		temp_deno = self.deno * other.deno
+		return “{}/{}”.format(temp_num, temp_deno)
+
+x = Fraction(2, 3)
+print(x)
+```
+
+`this will print 2/3, to print an object of a class the interpreter will look for the __str__ method, if this method 
+is not implemented in the class, the interpreter will simply print the memory address of the object, since we have implemented this method to print the fraction in a specific way, the interpreter will invoke the __str__ method and print the fraction`.
+```
+
+y = Fraction(6, 4)
+print(x+y) 
+```
+
+`the + operation will invoke the __add__ method and after all the calculation a string will be returned in the form of a fraction`.
+
+### Encapsulation
+We have to make sure when designing a class that data or properties of that class are hidden, hiding of properties of a class is called encapsulation.
+
+Why do we need encapsulation ?
+Without encapsulation anyone can access any property of an object and make changes to it, this can lead to problems, we will have some fields which cannot be altered or updated to any random value, hence to make sure that this does not happen we implement encapsulation.
+
+In the above Atm class example, we had props like pin and balance, now anyone can access the pin and balance of object sbi by just doing sbi followed by dot (sbi.) We need to hide these properties as they are sensitive. Anyone can create a mess by accessing the balance property and entering a string, to avoid this we can hide these properties.
+
+To hide a property or a method we can use __ (double underscore) at the start of a property or a method name, python interpreter will know that such a method or property is private hence it will hide these, meaning now when someone does sbi. (sbi dot) they won’t be able to see the properties or methods which have double underscores at the start.
+
+The properties and methods with double underscore will be accessible within the class, but will be hidden outside the class.
+
+ex:
+class Atm:
+	def __init__(self):
+		self.__pin = “”
+		self.__balance = 0
+		self.__menu()
+	
+	def __menu(self):
+		// code
+	
+	def deposit(self, amount):
+		// code
+
+sbi = Atm()
+sbi. // (the list will show only deposit method, pin, balance and menu won’t appear)
+
+A similar concept is available in Java called access modifiers. These are keywords like public, private and protected. To make properties or methods private we can use the private keyword and the property and method won’t be accessible outside the class.
+But in python nothing is truly private, meaning even though the double underscored properties and methods are hidden they can still be accessed.
+
+Understanding what double underscore does internally:
+class Atm:
+	def __init__(self):
+		self.__pin = “”
+		self.__balance = 0
+
+	def check_balance(self):
+		print(self.__balance)
+sbi = Atm()
+Now, internally python will create 2 variables for object sbi _Atm__pin, and _Atm__balance these will be same as __pin and __balance, now wherever there is self.__balance or self.__pin it is actually _Atm__pin, _Atm__balance internally in memory.
+
+Still one can access the balance and set a value by doing
+sbi.__balance = “abcdce” but this will not affect or change the balance of the sbi object because balance internally is _Atm__balance which is a different variable and sbi.__balance = “abcdce” will create another variable __balance in the memory, this variable will be set to abcdce.
+
+But one can directly access sbi._Atm__balance and alter or update the balance this will affect the actual balance. That’s why nothing in python is truly private.
+
+But the general understanding is that someone interacting with python must have the common sense that properties or methods with __ double underscore are private and should not be interacted with.
+
+Getters and Setters
+We saw how to hide properties, but hiding the property solves one problem that no one will be able to play with the properties. 
+But this raises another problem, if the attribute itself is hidden how is the user going to set the pin and when the user forgets the pin how will he be able to view it. This is where getters and setters come into picture.
+
+Getter is a method, which will show the attribute.
+Setter is a method to set a value of the attribute, we might think what’s the point in hiding the attribute if anyone can set it again using the setter.
+There is advantage of using a setter, when the attribute was public i.e. accessible to anyone, they were able to give any value to the attribute, but with the help of setter method we can now give the ability to set the value of an attribute but also control what type of value will be allowed for a particular attribute.
+
+With the help of setter we can make sure that the pin is a 4 digit number only,
+class Atm:
+	def __init__(self):
+		self.__pin = “”
+		self.__balance = 0
+	
+	def get_pin(self):
+		return self.__pin
+	
+	def set_pin(self):
+		new_pin = input(“Enter a 4 digit pin in range 0-9: ”)
+		if (type(new_pin) == str and len(new_pin) == 4 and new_pin.isdigit()):
+			self.__pin = new_pin
+		else:
+			print(“Invalid Pin”)
+
+So Encapsulation is the method of bundling attributes and methods together and hiding sensitive data and giving a controlled access to it.
+
+Reference Variable
+We can create an object by just doing,
+Atm(), but this object will be lost in the memory because we did not store it.
+
+sbi = Atm(), now sbi holds the reference to the memory address where the object of Atm() is created, hence it is called a reference variable. sbi is a reference variable not the object.
+
+Passing an object of a user defined class as an argument
+In python where we can pass an int, a list, a tuple etc into a function, similarly we can also pass an object of our very own defined class.
+ex: Let’s create a customer class.
+class Customer:
+    def __init__(self, name, gender):
+        self.name = name
+        self.gender = gender
+
+def greet(Customer):
+    if Customer.gender == "Male":
+        print(f"Hello {Customer.name} sir")
+    else:
+        print(f"Hello {Customer.name} ma'am")
+        
+rohit = Customer("Rohit", "Male")
+ankita = Customer("Ankita", "Female")
+greet(rohit)
+greet(ankita)
+
+We can pass the objects rohit and ankita to the method greet and use their attributes inside the greet function.
+When we pass the object rohit or ankita to greet, w.k.t rohit or ankita is the reference variable which is holding the address of Customer object inside the memory. Now since we do greet(rohit) this is called pass by reference because we are sending the reference variable to greet.
+
+Now in this Customer object will have 2 pointers 1 from rohit and another from greet, now any changes made to the attributes of rohit inside the greet function these changes are done on the same object which rohit is pointing towards, because both greet and rohit point to the same object in memory.
+
+Hence, we can say that user defined classes are mutable just like lists, sets, dictionaries etc, changes will be made on the same object, any change will not result in creation of a new object like in case of a string, tuple etc.
+
+class Customer:
+    def __init__(self, name):
+        self.name = name
+
+def greet(Customer):
+	Customer.name = “Talha”
+        
+rohit = Customer("Rohit")
+greet(rohit)
+print(rohit.name) // this will print “Talha” because the greet function updates the name attribute of the same object as rohit is pointing to.
+
+So if we send mutable data types like objects of user defined classes, lists, sets, dictionaries etc using pass by reference then any modifications inside that function will lead to the modification in the original object, hence it is better to send a copy or a clone of the original, this way the original object will be safe from any changes.
+
+This is not the case with immutable types like int, string, tuple etc.
+
+Instance Variables and Class or Static Variables:
+Instance variables are variables that belong to an object and are only accessible via an object. Instance variables are different for each object.
+Instance variables are written inside the constructor.
+
+Static variables are variables that belong to a class and are accessible via the class. Static variables are the same for every object of that class.
+Static variables are written outside the constructor.
+
+Static Methods:
+Static methods belong to a class, unlike instance methods which belong to an object.
+
+The static variables and methods are accessible without the creation of an object of that class as they belong to a class and not an object or an instance.
+
+Static methods are written without the self param because they don’t require an object.
+
+When do we use static variables or methods ?
+Static variables and methods are used when they are required across all the objects or are required at the class level, mostly utility methods are static methods like len() etc.
+
+Let's consider the Atm class example, let's say we have to keep a count of the number of objects that have been created of class Atm,
+
+If we take a variable counter to keep a count of the objects, lets say we use it as an instance variable then,
+class Atm:
+	def __init__(self):
+		self.pin = “”
+		self.balance = 0
+		self.count+=1
+
+sbi = Atm()
+hdfc = Atm()
+canara = Atm()
+
+Since count is an instance variable, for every object a count variable will be created whose value will be 1 and not 3, because for every new object new variables will be created.
+
+To solve this problem we can use a static variable, this way the count will be universal for every object and specific to each object.
+
+class Atm:
+	counter = 1
+	def __init__(self):
+		self.pin = “”
+		self.balance = 0
+		self.slno = counter
+Atm.counter = Atm.counter+1 # to access a class or static variable or method we use class name followed by dot (Atm.)
+
+c1 = Atm() // the object will be initialized for c1 with pin, balance =0 and counter = 1, at the same time counter will be increased by 1, making the counter = 2
+c2 = Atm() // the object for c2 will be initialized and this time c2’s slno will be 2 and counter will be 3
+c3 = Atm() // the object for c3 will be initialized and this time c3’s slno will be 3 and counter will be 4
+
+So, static variables are used when we need a field that will be common among all the objects, like in case of class Student, the school name can be kept as a static variable as it will be common among all the students.
+
+Student name, class, roll no etc can be instance variables as these attributes change for every new student.
+
+We will also implement getter and setter for class or static variables as well because as we have seen before with the help of getter and setter we will have control as to what value can be allowed for a specific attribute.
+
+First we make the class variables private by introducing a double underscore in the identifier and then write getter and setter for it.
+
+class Atm:
+    __counter = 1
+    
+    def __init__(self):
+         self.__pin = ""
+         self.__balance = 0
+         self.slno = Atm.__counter
+         Atm.__counter += 1
+    
+    def get_counter():
+        return Atm.__counter
+    
+    def set_counter(num):
+        if (type(num) == int):
+            Atm.__counter = num
+        else:
+            print("Invalid Counter")
+
+Atm.set_counter(1)
+c1 = Atm()
+print(c1.slno)
+c2 = Atm()
+print(c2.slno)
+c3 = Atm()
+print(c3.slno)
+
+print(Atm.get_counter())
+
+We can observe that set_counter and get_counter don’t have self as the param, since these are static_methods, self or object is not required to access them, they can be accessed via the class.
+
+We also use the @staticmethod annotation on top of the static methods to indicate that it's a static method, and let the user know that an object is not necessary to access such a method.
+
+Relationship b/w classes
+There are 2 kinds of relationships among classes:
+Aggregation - has a relation
+Inheritance - is a relation
+
+Aggregation
+We have a class customer and another class address. We know that every customer will have an address, hence the relationship b/w customer and address class is customer has a address.
+
+ 
+Since the Customer class needs or depends on Address class, this relation or dependency is called aggregation.
+
+In a customer class we can have address like this,
+class Customer:
+	def __init__(self, name, gender, city, pin_code, state):
+		self.name = name
+		self.gender = gender
+		self.city = city
+		self.pin_code = pin_code
+		self.state = state
+
+But we can notice an issue there is code repetition here, whenever a new customer is created all these fields should be entered, since address is common among all the customers we can create a separate class for it, and when creating a customer class object, we will also create an address class object and pass the address class to the customer class.
+
+class Customer:
+	def __init__(self, name, gender, address):
+		self.name = name
+		self.gender = gender
+		self.address = address
+	
+	def update_address(self, city, pin_code, state):
+		self.address.change_address(city, pin_code, state)
+
+class Address:
+	def __init__(self, city, pin_code, state):
+		self.city = city
+		self.pin_code = pin_code
+		self.state = state
+	
+	def change_address(self, city, pin_code, state):
+		self.city = city
+		self.pin_code = pin_code
+		self.state = state
+
+address1 = Address(“Bengaluru”, 560084, “Karnataka”)
+customer1 = Customer(“Talha”, “Male”, address1)
+
+Now we can access the address of customer1 by,
+print(customer1.address.city) # Since the address attribute of the customer class has the address1 object we can pick any attribute from the address object like city, pincode and state.
+
+If we want to update the address,
+customer1.update_address(“Riyadh”, 111078, “Saudi Arabia”)
+
+Inheritance
+Inheritance is the concept of a child class inheriting from its parent class. Similar to the real world where a man inherits wealth from his father, or a man inherits genetics from his father, a class can also inherit from a parent class.
+
+Why do we need inheritance ?
+Inheritance helps us in avoiding writing repetitive code or helps in implementing the DRY principle of coding. DRY means (Do Not Repeat Yourself)
+
+Ex: Let’s say we design a platform like Udemy, it will have 2 main entities a Student and a Creator
+Student will have the following capabilities:
+Register
+Login
+Buy
+Add a comment and more..
+
+Creator will have the following capabilities:
+Register
+Login
+Upload
+Reply to comment
+
+Now we can see that Both the Student and the Creator have 2 capabilities in common Register and Login, now this can be separated by creating a User class and the user class will have these 2 capabilities Register and Login.
+
+The Student and Creator class can then inherit the User class, this way both the Student and the Creator will have access to the Register and Login methods of the User class. This helped us in avoiding the repetitive logic of Register and Login for both Student and Creator.
+This is called inheritance.
+
+Inheritance always comes down from parent to child or top to bottom. A parent class cannot inherit the child class.
+
+What all can a child class access from the parent class ?
+The child class can access:
+Attributes
+Methods
+Constructor
+
+It cannot access private attributes and methods of the parent class.
+
+
+
+Inheritance is represented by an arrow, the arrow will point towards the parent class from the child class.
+Aggregation is represented by a diamond, the diamond will point towards the dependent class.
+
+Inheritance is also called is-a relationship, Student is a child of User.
+
+Also if a child class has no constructor then the interpreter will run its parent class’s constructor.
+
+Default constructor
+If a class has no __init__ implementation, then a default constructor will be run by the python method when an object of that class is created, a default constructor is always present, it's just that it’s hidden.
+
+Any implementation of __init__ method will override the default constructor.
+
+class Parent:
+     def __init__(self):
+         print("Inside Parent Constructor")
+        pass
+    
+class Child(Parent):
+    pass
+
+c1 = Child()
+print(type(c1))
+
+Here the interpreter will run the __init__ method of Parent when initializing the c1 object.
+
+Polymorphism
+Method Overriding
+A child class implementing its own version of inherited method is called method overriding.
+Ex:
+class Animal:
+	def make_sound():
+		pass
+
+class Dog(Animal):
+	def make_sound():
+		print(“Woof”)
+
+Here, the dog implements its own version of sound, hence this is called overriding a method.
+
+Code Snippets to test concepts
+class Parent:
+	def __init__(self, num):
+		self.__num = num
+	
+	def get_num(self):
+		return self.__num
+
+class Child(Parent):
+	def show(self):
+		print(“This is child class”)
+son = Child(100)
+print(son.get_num())
+son.show()
+
+Since child class does not have any constructor, the parent's constructor will be invoked and 100 will be passed to the constructor of the parent.
+
+The parent constructor will initialize the __num variable with 100
+
+Now, since son inherits the parent class, hence it can access its method get_num(), so 100 will be printed and finally the show() method of son will be executed.
+
+class Parent:
+	def __init__(self, num):
+		self.__num = num
+
+	def get_num(self):
+		return self.__num
+
+class Child(Parent):
+	def __init__(self, val, num):
+		self.__val=val
+		
+	def get_val(self):
+		return self.__val
+
+son = Child(100, 10)
+print(“Parent num:”, son.get_num())
+print(“Child Val:”, son.get_val())
+
+The above code will throw an error that, son does not have method get_num() because,
+Child class has its own constructor, so the Parent constructor won’t be invoked, since the parent constructor is not invoked the parent object won’t be created hence the child class won’t have the get_num() method.
+
+So we know from this is, if the Child class has its own constructor the Parents constructor won’t be invoked.
+
+class A:
+	def __init__(self):
+		self.var1 = 100
+
+	def display1(self, var1):
+		print(“Class A:”, self.var1)
+class B(A):
+	def display2(self, var1):
+		print(“Class B:”, self.var1)
+
+obj = B()
+obj.display1(200)
+
+Since class B does not have its own constructor, the parent class A’s constructor is called and var1 is initialized to 100
+diplay1 of class A is called by obj and 200 is passed, display1 will print 100 and not 200, because display1 is printing self.var1, but 200 is the local variable of method display1 here the obj’s var1 was used not the display1’s var1.
+
+If display1’s var1 was used then code would have been, print(“Class A:”, var1)
+
+Super keyword
+Super keyword is used to access the parent class’s methods and the constructor. We cannot access the attributes of the parent class with super. Only methods and the constructor.
+
+The super keyword won’t work outside the child class, it must be used within the child class.
+
+class Phone:
+	def __init__(self, price, brand, camera):
+		print(“Inside phone constructor”)
+		self.price = price
+		self.brand = brand
+		self.camera = camera
+	
+	def buy(self):
+		print(“Buying a phone”)
+
+class SmartPhone(Phone):
+	def buy(self):
+		print(“Buying a smartphone”)
+		super().buy()
+
+s = SmartPhone(20000, “Apple”, 13)
+s.buy()
+
+First the Phone or Parent class constructor will be called since SmartPhone does not have a constructor and an object of SmartPhone will be initialized.
+Then the buy() method of SmartPhone will be invoked and “Buying Smartphone” will be printed
+Then with the help of super() keyword buy() method of parent class will be invoked and “Buying a phone” will be printed.
+We cannot do
+s.super().buy() // this will not work, super outside the child class cannot be used.
+
+Example of why Super keyword is useful:
+class Phone:
+	def __init__(self, price, brand, camera):
+		self.price = price
+		self.brand = brand
+		self.camera = camera
+	
+class SmartPhone(Phone):
+	def __init__(self, price, brand, camera, os, ram):
+		super().__init__(price, brand, camera)
+		self.os = os
+		self.ram = ram
+s = SmartPhone(10000, “samsung”, 13, “Android”, 6)
+
+So, here since every Phone will have a price, brand and name the child class borrows this from the parent class Phone. The SmartPhone class will implement its own features like os and ram.
+So to satisfy this dependency, SmartPhone class uses the super keyword and initializes the common attributes via the parent constructor and implements its own features or attributes separately.
+
+Also if super needs to be used then it must be the 1st statement inside the child constructor, otherwise it won’t work elsewhere.
+
+Another example of super:
+class Parent:
+	def __init__(self):
+self.num = 100
+
+class Child(Parent):
+def __init__(self): 
+		super().__init__()
+		self.var=200
+	def show(self):
+		print(self.num)
+		print(self.var)
+
+son = Child()
+son.show()
+
+Here we are invoking the Child class constructor by creating the object son, the Child constructor invokes, the parent constructor with super(), num in super gets initialized to 100, then var in child gets initialized to 200.
+Finally we call show this will print 100 and 200, this happens because what is self, self is son and son’s parent class Parent is initialized and now son can access parents attributes, hence it is able to access num and print it.
+
+Method Overloading
+Method overloading is having multiple methods with the same method definition but different behaviour. Basically the method names will be the same but the no of params will differ.
+ex:
+class Math:
+	def sum(self, a, b):
+		return a + b
+	
+	def sum(self, a, b, c):
+		return a + b + c
+Technically the above example is method overloading, where depending on the number of arguments sent the right method will be picked, but this way of overloading methods is not possible in python.
+
+The pythonic way will be to use only one method and write if conditions inside it to return the proper result based on the arguments.
+
+class Math:
+	def sum(self, a, b, c=0):
+		if (c == 0):
+			return a + b
+		else:
+			return a + b + c
+Now, when we send only 2 numbers to sum, a+b will be returned because c is 0, if we send 3 numbers then a + b + c will be returned because c is not 0.
+
+Operator Overloading:
+We have operators like +, -, * etc these are usually used b/w 2 numbers to perform a certain operation like addition, subtraction and multiplication etc.
+But we know that “Hello” + “World” also works . It concatenates the 2 strings to create a new one, the creator of the string class changed how the + operator works in case of strings, this is called operator overloading.
+We also implemented operator overloading in our fraction class where we overloaded the __add__ method to make addition of 2 fractions. 
+Operator overloading is done by changing the behaviour of the magic methods or overriding the magic methods like __add__, __sub__ etc
+
+Inheritance
+Types of Inheritance:
+Single Level Inheritance
+Multilevel Inheritance
+Hierarchical Inheritance
+Multiple Inheritance
+Hybrid Inheritance
+
+1. Single Level Inheritance - A Child class Inheriting from a Parent class.
+class Parent:
+    def eyeColor(self):
+        print("Parents Eye Color")
+    
+class Child(Parent):
+    def makeSound(self):
+        print("I sound differently")
+
+c1 = Child()
+c1.eyeColor()
+
+2. Multilevel Inheritance - A Child class inheriting from a Parent class and Parent class inheriting from the Grand Parent class.
+class GrandParent:
+    def iam_tall(self):
+        print("Grand Parent is Tall")
+
+class Parent(GrandParent):
+    def eyeColor(self):
+        print("Parents Eye Color")
+    
+class Child(Parent):
+    def makeSound(self):
+        print("I sound differently")
+
+c1 = Child()
+c1.eyeColor()
+c1.iam_tall()
+
+
+
+
+class A:
+    def m1(self):
+        return 20
+    
+class B(A):
+    def m1(self):
+        return 30
+    
+    def m2(self):
+        return 40
+    
+class C(B):
+    def m2(self):
+        return 20
+    
+obj1 = A()
+obj2 = B()
+obj3 = C()
+
+print(obj1.m1() + obj3.m1() + obj3.m2())
+
+20 will be returned from m1 of class A, then since obj3 or class C does not have m1 it will 
+get m1 from its one level above i.e. class B because class B has it and finally m2 of obj3 will be added
+
+3. Hierarchical Inheritance - Two or more subclasses inheriting from a single Parent class.
+class Animal:
+    def makes_sound(self):
+        print("Animal Makes Sound")
+
+class Cat(Animal):
+    def makes_sound(self):
+        print("Meow")
+
+
+class Dog(Animal):
+    def makes_sound(self):
+        print("Woof")
+        
+cat = Cat()
+cat.makes_sound()
+dog = Dog()
+dog.makes_sound()
+
+We can see both cat and dog inheriting from parent class Animal
+
+4. Multiple Inheritance - A subclass inheriting from 2 or more Parent classes, ex a child inheriting both from father and mother.
+class Camera:
+    def click_picture(self):
+        print("I can click pictures")
+    def power_on(self):
+        print("Camera Powering On")
+        
+class Phone:
+    def power_on(self):
+        print("Phone powering on")
+        
+    def make_call(self):
+        print("I can make a call")
+        
+class SmartPhone(Camera, Phone):
+    pass
+    # def power_on(self):
+    #     print("SmartPhone powering on")
+        
+
+apple = SmartPhone()
+apple.power_on()
+apple.click_picture()
+apple.make_call()
+
+In the above example we have a Camera class, a Phone class and a SmartPhone class, SmartPhone class extends both Camera and Phone class as it can both click pictures and make phone calls.
+
+In case the smartphone class does not have a power_on() method then it will inherit from the first class which is extending i.e. Camera in this case, if the 1st class was Phone then it would inherit Phone’s power_on method.
+This is also called Method Resolution Order, which says in case of conflicting methods, the first class which is extended, method of that class will be executed.
+
+Since the SmartPhone class has a power_on method it will override both the Parent class implementations.
+
+5. Hybrid Inheritance - A subclass whose inheritance is a mix of Single Level, Multiple and Hierarchical.
+
+Abstraction
+Abstraction is hiding implementation details and exposing only necessary behaviour. It is also a way of enforcing certain conditions on the dependent class.
+
+ex: class Car will have power on, accelerate, decelerate, break etc now the extending car bmw, audi, toyota etc must implement these essential behaviors as it belongs to the car class family and bmw can implement any other features or behaviour like air bags, hydraulic suspensions etc on its own.
+
+For a class to be an Abstract class the class must extend the ABC (Abstract Class) in python and must have at least one abstract method.
+
+Abstract Method vs Concrete Method:
+Abstract method is declared inside an abstract class but has no implementation forcing every subclass to provide its own implementation.
+
+Concrete method is a normal method with full implementation that can be inherited by subclasses without overriding.
+
+from abc import ABC, abstractmethod
+
+Another example of using an abstract class would be in cases of Databases in an app. When we build an app in some cases we will be using more than one database to store and perform our operations.
+The functionality of each database is the same like connecting to the db, creating a record, deleting a record, getting a record, updating a record. But every database has a different way of implementing these.
+
+Hence to handle this we can create an abstract class called Database with all these essential behaviours as abstract methods.
+
+Then different databases like postgresql, mongodb etc can extend this abstract class Database and implement their own version of the abstract methods like connection, creating, deleting etc.
+
+Let’s take Payment Gateway as an example 
+Payment Gateway without Abstraction
+We will have a Payment Providers like Razorpay, Stripe, Paypal etc
+We have our payment service which executes payment via one of these providers
+
+class Razorpay:
+	def pay(self):
+		print(“paying via razorpay”)
+
+class Stripe:
+	def pay(self):
+		print(“paying via stripe”)
+
+class PaymentService:
+	def __init__(self):
+		provider = Razorpay()
+
+	def make_payment(self):
+		self.provider.pay()
+
+payment_service = PaymentService()
+payment_service.pay()
+
+Here, we have hardcoded the payment provider as razorpay in our payment service class. If we were to change the provider to stripe sometime later, we would have to come back to the payment service class and update the provider in the constructor to Stripe(). 
+Similarly if we have hard coded a provider as razorpay in other services then we will have to make the same change everywhere wherever it is done this way.
+
+PaymentGateway with abstraction:
+We can improve this by using an abstract class called PaymentProvider.
+This class will have the method pay.
+The Provider classes like Razorpay, Stripe, Paypal etc will extend this abstract class and implement their own version of abstract method pay.
+
+Now in PaymentService instead of hardcoding the provider to any of the listed above, we will instead pass the provider as an argument to the PaymentService.
+
+We will have a central point like app.py or main.py where we will create the object of a provider we want and then pass the reference of this object to the PaymentService. 
+
+Now if we ever want to change the provider we will simply create an object of that provider and pass the reference of the new provider to the PaymentService class and we have the provider changed. We can implement the same methodology across all the classes which require a provider.
+
+This way we will avoid the complexity of tracking where all we have used the provider razorpay and going to each file and changing the provider.
+
+from abc import ABC, abstractmethod
+class PaymentProvider(ABC):
+	@abstractmethod 
+def pay(self):
+	pass
+
+class Razorpay(PaymentProvider):
+	def pay(self):
+		print(“paying via razorpay”)
+
+class Stripe(PaymentProvider):
+	def pay(self):
+		print(“paying via stripe”)
+
+class Paypal(PaymentProvider):
+	def pay(self):
+		print(“paying via paypal”)
+
+
+
+class PaymentService:
+	def __init__(self, provider: PaymentProvider):
+		self.provider = provider
+	
+	def make_payment(self):
+		provider.pay()
+
+main.py
+stripe = Stripe()
+payment_service = PaymentService(stripe)
+payment_service.pay()	
+
+Summary:
+We use abstraction when we have multiple interchangeable implementations of the same behavior.
+Instead of hardcoding Razorpay or Stripe inside PaymentService, we create a PaymentProvider abstraction that defines the pay() method.
+Concrete classes like Razorpay, Stripe, and PayPal implement this contract.
+PaymentService receives a PaymentProvider through its constructor (dependency injection).
+This decouples PaymentService from the concrete provider, making it flexible, testable, and open for extension without modifying the service code.
+At runtime, we can choose the desired provider in main.py or a factory, and pass it into PaymentService.
 
 
 
