@@ -1133,6 +1133,197 @@ Since, f returns a function object, val will store that, now we can pass 2 and 3
 2. Write once use forever
 3. Improves Code readability
 
+## Lecture - 31
+### Lambda Functions
+Lambda functions are no name or anonymous functions, they are written using the lambda keyword, they can take any number of arguments but can take only one expression.
+
+### Higher Order Functions
+Functions that can take in functions as arguments and also the functions which return functions are called higher order functions.
+
+Using lambda functions we can change how a function behaves, ex: we can write a single method which returns a count, the same method can be used to return 
+- count of even numbers in a list.
+- count of odd numbers in a list and 
+- count of numbers which are divisible by 3.
+
+```
+def count(func, l:list):
+    result = 0
+
+    for i in l:
+        if (func(i)):
+            result+=1
+
+    return result
+
+odd = lambda: x: if x % 2 == 1
+even = lambda: x if x % 2 == 0
+div_by_3 = lambda: x % 3 == 0
+
+l = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+print(count(odd, l)) → 5
+print(count(even, l)) → 4
+print(count(div_by_3, l)) → 3	
+```
+
+We have one function count which takes in a function and a list as an argument, the behaviour of count changes depending on what lambda function we pass, if we pass odd it gives the count of odd elements in the list, similarly for even and div_by_3.
+
+### Higher Order Functions provided by Python:
+1. Map
+2. Filter
+3. Reduce
+
+### Map
+map() can be used to perform a specific operation on every item of an iterable. The map() function takes in a function and an iterable.
+
+Let's find even numbers in a given list using map:
+```
+l = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+x = list(map(lambd x: x % 2 == 0, l))
+print(x)
+```
+
+We pass a function in the form of a lambda function, we can also pass a normal function and the iterable list l.
+The map function returns a map object, ***we can cast it to a list and print the list***, we will see boolean values corresponding to each value in the list, if a value is even it will be represented as True.
+`[False, True, False, True, False, True, False, True, False]`
+
+Multiply every element of a list by 2:
+```
+l = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+x=list(map(lambda x: x * 2, l))
+print(x)
+[2, 4, 6, 8, 10, 12, 14, 16, 18]
+```
+
+Passing a normal function in map():
+
+```
+def isEven(x:int):
+    return x % 2 == 0
+
+l = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+x=list(map(isEven, l))
+print(x)
+```
+
+`[False, True, False, True, False, True, False, True, False]`
+
+Getting students name from a JSON:
+```
+students = [
+    {
+        "name": "Mohammed Yaseen",
+        "father name": "Hashmathulla",
+        "address": "204, Wheeler Road Extension, Cooke Town, Bengaluru - 560084"
+    },
+    {
+        "name": "Mohammed Talha",
+        "father name": "Hashmathulla",
+        "address": "204, Wheeler Road Extension, Cooke Town, Bengaluru - 560084"
+    },
+    {
+        "name": "Mohammed Taha",
+        "father name": "Hashmathulla",
+        "address": "204, Wheeler Road Extension, Cooke Town, Bengaluru - 560084"
+    }
+]
+
+x = list(map(lambda x: x["name"], students))
+print(x)
+['Mohammed Yaseen', 'Mohammed Talha', 'Mohammed Taha']
+```
+
+Imagine lambda x as, getName(dict) a function which takes in a dictionary and returns the value of key “name” from the dictionary.
+
+### Filter
+Filter takes in a function and an iterable, it filters out elements from the iterable on the basis of a condition.
+It returns a filter object, which can be converted into a list using type casting.
+
+Filter numbers greater than 3:
+
+```
+l = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+ans = list(filter(lambda x: x>3, l))
+print(ans)
+[4, 5, 6, 7, 8, 9]
+```
+
+Filter Students of branch cse and get their names:
+
+```
+students = [
+    {
+        "name": "Mohammed Yaseen",
+        "father name": "Hashmathulla",
+        "address": "204, Wheeler Road Extension, Cooke Town, Bengaluru - 560084",
+        "branch": "mechanical"
+    },
+    {
+        "name": "Mohammed Talha",
+        "father name": "Hashmathulla",
+        "address": "204, Wheeler Road Extension, Cooke Town, Bengaluru - 560084",
+        "branch": "mechanical"
+    },
+    {
+        "name": "Mohammed Taha",
+        "father name": "Hashmathulla",
+        "address": "204, Wheeler Road Extension, Cooke Town, Bengaluru - 560084",
+        "branch": "cse"
+    },
+    {
+        "name": "Ron",
+        "father name": "",
+        "address": "",
+        "branch": "cse"
+    }
+]
+
+x = list(filter(lambda x: x["branch"] == "cse", students))
+names = list(map(lambda x: x["name"], x))
+print(names)
+['Mohammed Taha', 'Ron']
+```
+
+### Reduce
+It is used to reduce a given iterable based on a certain condition. It takes in a function and an iterable. It is part of the functools module.
+
+Reduce an array to return only the greatest element:
+```
+l1 = [12, 56, 32, 22, 47, 58]
+print(functools.reduce(lambda x, y: x if x > y else y, l1))
+58
+```
+We have a function which takes x, y and a list. The function compares 2 items on each iteration and keeps the larger one.
+
+It - 1, 12 & 56, it will keep 56 and reduce the l1 to [56, 32, 22, 57, 58]
+It - 2, 56 & 32, it will keep 56 and reduce the l1 to [56, 22, 57, 58]
+It - 3, 56 & 22, it will keep 56 and reduce the l1 to [56, 57, 58]
+It - 4, 56 & 57, it will keep 57 and reduce the l1 to [57, 58]
+It - 5, 57 & 58, it will keep 58 and reduce the l1 to [58]
+
+It will return 58
+
+### List Comprehension
+It is used to create a list programmatically.
+```
+l1 = [1, 2, 3, 4, 5, 6, 7, 8]
+
+l2 = [item for item in l1 if item % 2 == 0]
+```
+
+It says keep item, if item of l1 is even
+
+### Dictionary Comprehension
+To be done...
+
+### Lecture - 31 Summary
+1. What are lambda functions ?
+2. Why are lambda functions used ?
+3. What are higher order functions ?
+4. How do lambda functions help in higher order functions ?
+5. What are inbuilt higher order functions ?
+6. What is list comprehension and dict comprehension ?
+
 
 
 
