@@ -1285,7 +1285,7 @@ print(names)
 ```
 
 ### Reduce
-It is used to reduce a given iterable based on a certain condition. It takes in a function and an iterable. It is part of the functools module.
+It is used to reduce a given iterable based on a certain condition. It takes in a function and an iterable. It is part of the functools module. It returns a single value.
 
 Reduce an array to return only the greatest element:
 ```
@@ -1301,7 +1301,15 @@ It - 3, 56 & 22, it will keep 56 and reduce the l1 to [56, 57, 58]
 It - 4, 56 & 57, it will keep 57 and reduce the l1 to [57, 58]
 It - 5, 57 & 58, it will keep 58 and reduce the l1 to [58]
 
-It will return 58
+It will return 58, but it will not modify the given array, it maintains two variables x and y, x being an accumulator and y
+being the next value. It compares y or next value with accumulator x and in this case if next value is greater than accumulator
+it reassigns the accumulator to the next value or if the next value is smaller it leaves the accumulator as it is and finally
+returns the single value.
+
+### Note:
+functools.reduce keeps an accumulator and iterates over the iterable.
+On each step, it applies the function to the accumulator and the next element, producing a new accumulator value.
+The original iterable is never modified.
 
 ### List Comprehension
 It is used to create a list programmatically.
@@ -1323,6 +1331,8 @@ To be done...
 4. How do lambda functions help in higher order functions ?
 5. What are inbuilt higher order functions ?
 6. What is list comprehension and dict comprehension ?
+
+
 
 
 
