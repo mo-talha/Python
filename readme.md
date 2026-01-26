@@ -2535,7 +2535,7 @@ except InsufficientFundsError as e:
 
 ### Hierarchy of Exception class in Python
 
-["exceptions"](./images/exceptions.png)
+!["exceptions"](./images/exceptions.png)
 
 **Note:**
 `if __name__ == “__main__”`
