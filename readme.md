@@ -2313,3 +2313,236 @@ Concrete classes like Razorpay, Stripe, and PayPal implement this contract.
 PaymentService receives a PaymentProvider through its constructor (dependency injection).
 This decouples PaymentService from the concrete provider, making it flexible, testable, and open for extension without modifying the service code.
 At runtime, we can choose the desired provider in main.py or a factory, and pass it into PaymentService.
+
+## Lecture - 11
+### Exception Handling
+There are 2 stages where error happens in a program:
+1. During compilation - Syntax error
+2. During execution/runtime - Exceptions 
+
+### Syntax Error
+Something in the program which is not written according to the program grammar. Error is raised by the interpreter/compiler.
+
+### Examples of syntax error:
+print “hello world” → missed the parenthesis
+if a > b 
+print(a) #missing colon and indentation
+
+### Some of the most common errors and their names
+### 1. IndexError
+It is thrown when trying to access an item at an invalid index.
+
+### 2. ModuleNotFoundError
+This error is thrown when a module is not found.
+ex: import randomi → there is a typo, random module is there but randomi is not present.
+
+### 3. KeyError
+Key error is thrown when interacting with a dictionary and we try to get a key which does not exist.
+
+### 4. TypeError
+Type error is thrown when an operation or function is applied to an object of inappropriate type.
+ex: Trying to concatenate a string and an integer, “Hello” + 1
+
+### 5. ValueError
+The ValueError is thrown when a function’s argument is of an inappropriate type.
+ex: int(‘a’)
+
+### 6. NameError
+It is thrown when a variable could not be found.
+ex: print(k) k is not defined
+
+### 7. AttributeError
+It is thrown when trying to access an attribute which is not present or defined in that class.
+ex: l = [1, 2, 3] 
+l.upper() → upper method does not exist in the list class.
+
+### Exceptions
+If things go wrong during execution/runtime of the program. It generally happens when the logic is wrong, memory overflows or database error.
+
+In exceptions the syntax is perfect that’s why exceptions are not caught by the compiler but it is caught by the python runtime. 
+
+### Examples of exception:
+Divide by 0 error, when dividing 2 numbers a and b the method divide will take 4 and 0 and the 0 denominator won’t be caught by the compiler because it is a number but since logically it is wrong to divide a number by 0 an exception will occur.
+
+Another example would be a recursive function without a base case.
+
+### Stacktrace
+It is a message logged by the python compiler or the runtime when an error or an exception occurs.
+
+### It provides information like:
+- A message about the type of error
+- The file name where the error has occurred 
+- The line where the error might be
+- It is actually a way that python runtime helps a programmer to navigate and fix the issue.
+
+But it is considered bad if it is shown to the end user as it is too technical for the end user to handle. It also has a huge impact on the user experience.
+
+To avoid this we use exception handling so that we improve our user experience by avoiding these technical messages to them and also exception handling improves the security of our application as we won’t be letting any sensitive info come out as a message.
+
+### How to handle exceptions ?
+They are handled using a try except block.
+So the basic idea is whenever we feel like some piece of code might go wrong we put it in the try block and what to do if it goes wrong we write it in the except block.
+
+Generally whenever we are interacting with external things in our program like interacting with a database or trying to access a file, connecting to an API etc these are the situations where there is a chance of exceptions.
+
+Because the database connection might fail, the file which we are trying to access might not exist and the API we are trying to hit might not be working, these kinds of cases will be put under a try except block.
+
+The except block makes sure that in case of an exception a good message is delivered which does not scare or make it difficult to the end user.
+
+ex: trying to access a file
+try:
+	with open(“sample.txt”, “w”) as f:
+		f.write(“hello world”)
+except:
+	print(“sorry file not found”)
+
+### Handling specific exceptions
+When handling exceptions it is very straightforward to print or log a generic message like file not found or something went wrong etc. Implementing only generic exception handling is a bad practice.
+
+We have to think of scenarios where things can go wrong if we take the above file example, then a wrong file name can be provided, an unsupported mode could be used, something apart from read ‘r’ or write ‘w’ mode etc. These can be defined as specific exceptions and even after these there can be scenarios which can occur and which we will miss, not everything can be thought of and written as an exception.
+
+To handle such cases, after implementing all the possible exceptions which we can think of we will write a general exception to catch the unexpected errors.
+
+The Exception class has many methods. A useful method can be with_traceback. 
+Most of the times simple logging the full exception gives the information but in some scenarios where we want every bit of the detail like module name, line no etc where the exception occurred we can log the traceback using the with_traceback()
+```
+try:
+	m=5
+	f = open(“sample.txt”, “r”)
+	print(f.read())
+	print(m)
+	print(5/2)
+	l = [1, 2, 3]
+	l[100]
+except FileNotFoundError:
+	print(“File Not Found”)
+except NameError:
+	print(“variable not defined”)
+except ZeroDivisionError:
+	print(“can’t divide by 0”)
+except Exception as e:
+	print(e)
+```
+In the above code we are handling specific exceptions like file not found in case the file name is wrong this except block will be triggered.
+Similarly if there is a variable which is not defined and we try accessing it the second block will be triggered.
+The 3rd block will handle if there is a division happening with 0
+Finally any unexpected error which might occur will be handled by the last exception block, ex we are trying to access an item in the list at 100th index but list does not have it so it will be handled by the last exception block.
+
+Also the general exception block is placed at the end after all the specific except blocks else if the general block is written first then it will be executed first over other specific except blocks.
+
+### The else block
+The flow is generally we try something within a try block, if something goes wrong then the control is given to one of the exception blocks. 
+
+The else block is used when code inside the try block works without any exceptions and then the control is handed over to the else block. 
+
+Basically it is used to improve readability, when using the else block we must be sure that the specific code inside the else block will not break only then we use an else block.
+
+ex:
+``` 
+try:
+	f = open(“sample.txt”, “r”)
+except FileNotFoundError:
+	print(“File Not Found”)
+except Exception e:
+	print(e)
+else:
+	print(f.read())
+```
+In the above code we try to open the file sample.txt in read mode and if the file does not exist the control is given to the 2nd exception block, if any other exception occurs other than this then the control is given to the 3rd block, if no exceptions then the else block will be executed.
+
+### finally block
+finally is used at the very end of the try, except, else blocks. It is mainly used to execute a piece of code which we want to run in every possible condition.
+
+ex: either the database connected or not we still want to be sure that the connection to the db closes, if a socket is open we want to be sure that it closes. 
+
+It is basically used to do the final cleanup.
+
+The code written under the finally block will always be executed.
+
+### Raising Exceptions
+In python, exceptions are raised when errors occur at runtime.
+We can also manually raise exceptions using the raise keyword.
+We can also manually pass values/messages to the exception to clarify why that exception was raised. 
+
+The exceptions raised are caught by the except block.
+```
+class Bank:
+	def __init__(self, balance):
+		self.balance = balance
+
+	def withdraw(self, amount):
+		if (amount < 0):
+			raise Exception(“amount cannot be -ve”)
+		if (amount > self.balance):
+			raise Exception(“insufficient funds”)
+		self.balance = self.balance - amount
+
+account = Bank(10000)
+try:
+	account.withdraw(5000)
+except Exception as e:
+	print(e)
+else:
+	print(account.balance)
+```
+
+In the above code we throw or raise exceptions when the amount passed to the withdraw method is less than 0 or greater than the balance in the account. 
+We basically create an object of the Exception class with a message and this object is raised or thrown to the except block which tries to catch it.
+
+We basically handle the 2 most common scenarios which occur when a person tries to withdraw money.
+
+### Creating custom Exceptions
+Python gives us the ability to create custom exceptions. We can basically create our own exception class which extends the main Exception class.
+
+In python the FileNotFoundError, ZeroDivisionError are all custom exceptions which inherit the main Exception class, similarly we can create our own.
+
+A custom exception must always be a class and not a method and the custom exception class must extend the main Exception class of python. By extending the main Exception class the custom exception class gets the ability to raise and get caught in the except block.
+
+Methods cannot be raised because methods cannot inherit classes hence without inheritance of the main Exception class, there will be no ability to raise an exception, and if the exception cannot be raised then it cannot be caught.
+
+### What’s the advantage of creating our own exception class ?
+We can create exceptions tailored to our application, which the general Exception class won’t have.
+
+Let's say we have our own platform which provides crypto currency data, 
+to get the data the user needs an API key, 
+the user can only send a specific number of requests to our platform on the free tier.
+
+### Common exceptions that occur in such an application
+- API key creation failure
+- Free tier exhausted 
+- Incorrect API key
+
+###Creating custom exception class for our bank
+```
+class InsufficientFundsError(Exception):
+    def __init__(self, message):
+        pass
+        
+class Bank:
+    def __init__(self, balance):
+        self.balance = balance
+        
+    def withdraw(self, amount):
+        if amount > self.balance:
+            raise InsufficientFundsError(f"Insufficient Funds, your current balance is: {self.balance}")
+        
+sbi = Bank(10000)
+try:
+    sbi.withdraw(20000)
+except InsufficientFundsError as e:
+    print(e)
+```
+
+### Hierarchy of Exception class in Python
+
+["exceptions"](./images/exceptions.png)
+
+**Note:**
+`if __name__ == “__main__”`
+In python a file can be run independently and can be imported as a module in another file as well. 
+Without if __name__ == “__main__” when file a is imported any functions or methods invoked in the file a will be automatically be invoked when we run file b. 
+To avoid this we can use `if __name__ == “__main__”` inside the file a and inside this if condition we can invoke the required functions.
+
+Now the interpreter knows that only when a file name == a is executed I have to invoke these functions.
+
+Lets say file a is imported by file b. Now when file b is run then the invoked functions won’t be called automatically because the interpreter knows that those functions in file a must be invoked if a file named a is executed.
