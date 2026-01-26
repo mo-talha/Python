@@ -2512,7 +2512,7 @@ the user can only send a specific number of requests to our platform on the free
 - Free tier exhausted 
 - Incorrect API key
 
-###Creating custom exception class for our bank
+### Creating custom exception class for our bank
 ```
 class InsufficientFundsError(Exception):
     def __init__(self, message):
