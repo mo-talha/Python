@@ -1178,7 +1178,7 @@ map() can be used to perform a specific operation on every item of an iterable. 
 Let's find even numbers in a given list using map:
 ```
 l = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-x = list(map(lambd x: x % 2 == 0, l))
+x = list(map(lambda x: x % 2 == 0, l))
 print(x)
 ```
 
@@ -1347,7 +1347,6 @@ Everything in python is an object, meaning it is an instance of a class.
 a=2, this a is pointing to an object of class int.
 l = [1, 2, 3] l is pointing to an object of the class list.
 
-
 ### Naming convention of a class, methods and properties
 Classes are named in Pascal's case. ex: ThisIsAClass
 Methods and properties are named in snake cases. full_name, get_balance() etc
@@ -1477,7 +1476,7 @@ def __init__(self):
 The __init__ method initializes the object sbi and sets sbi.pin = “” and sbi.balance = 0.
 
 ### Why do we need self ?
-In OOP the rule is that properties, methods inside a class can only be accessed by an object.
+In OOP the rule is that instance properties and instance methods of a class can only be accessed by an object or an instance of that class. Python passes the instance as self.
 
 That’s why in the above example we do self.pin, self.balance and self.menu()
 
@@ -1493,7 +1492,7 @@ def check_balance(self):
 
 Now when we do `sbi.check_balance()` → python internally passes sbi in check_balance(sbi) and the self becomes sbi, now `temp == self.pin`, is actually `temp == sbi.pin`, checking in the pin property of sbi object in the memory.
 
-Hence, we abide by the rule that ***properties and methods can only be accessed by objects***, self gives us the way to do that as we saw above how self helped us in checking the pin of sbi.
+Hence, we abide by the rule that ***instance properties and methods can only be accessed by objects***, self gives us the way to do that as we saw above how self helped us in checking the pin of sbi.
 
 If a method in the class does not have self as its param, then interpreter will throw an error saying ***check_balance has 0 positional arguments but 1 argument is passed***.
 Ex:
@@ -2079,8 +2078,8 @@ Technically the above example is method overloading, where depending on the numb
 The pythonic way will be to use only one method and write if conditions inside it to return the proper result based on the arguments.
 ```
 class Math:
-	def sum(self, a, b, c=0):
-		if (c == 0):
+	def sum(self, a, b, c=None):
+		if c is None:
 			return a + b
 		else:
 			return a + b + c
@@ -2222,12 +2221,12 @@ ex: class Car will have power on, accelerate, decelerate, break etc now the exte
 
 For a class to be an Abstract class the class must extend the ABC (Abstract Class) in python and must have at least one abstract method.
 
-Abstract Method vs Concrete Method:
+### Abstract Method vs Concrete Method:
 Abstract method is declared inside an abstract class but has no implementation forcing every subclass to provide its own implementation.
 
 Concrete method is a normal method with full implementation that can be inherited by subclasses without overriding.
 
-from abc import ABC, abstractmethod
+***from abc import ABC, abstractmethod***
 
 Another example of using an abstract class would be in cases of Databases in an app. When we build an app in some cases we will be using more than one database to store and perform our operations.
 The functionality of each database is the same like connecting to the db, creating a record, deleting a record, getting a record, updating a record. But every database has a different way of implementing these.
@@ -2240,7 +2239,7 @@ Let’s take Payment Gateway as an example
 Payment Gateway without Abstraction
 We will have a Payment Providers like Razorpay, Stripe, Paypal etc
 We have our payment service which executes payment via one of these providers
-
+```
 class Razorpay:
 	def pay(self):
 		print(“paying via razorpay”)
@@ -2258,11 +2257,11 @@ class PaymentService:
 
 payment_service = PaymentService()
 payment_service.pay()
-
+```
 Here, we have hardcoded the payment provider as razorpay in our payment service class. If we were to change the provider to stripe sometime later, we would have to come back to the payment service class and update the provider in the constructor to Stripe(). 
 Similarly if we have hard coded a provider as razorpay in other services then we will have to make the same change everywhere wherever it is done this way.
 
-PaymentGateway with abstraction:
+### PaymentGateway with abstraction:
 We can improve this by using an abstract class called PaymentProvider.
 This class will have the method pay.
 The Provider classes like Razorpay, Stripe, Paypal etc will extend this abstract class and implement their own version of abstract method pay.
@@ -2275,11 +2274,12 @@ Now if we ever want to change the provider we will simply create an object of th
 
 This way we will avoid the complexity of tracking where all we have used the provider razorpay and going to each file and changing the provider.
 
+```
 from abc import ABC, abstractmethod
 class PaymentProvider(ABC):
 	@abstractmethod 
-def pay(self):
-	pass
+	def pay(self):
+		pass
 
 class Razorpay(PaymentProvider):
 	def pay(self):
@@ -2293,8 +2293,6 @@ class Paypal(PaymentProvider):
 	def pay(self):
 		print(“paying via paypal”)
 
-
-
 class PaymentService:
 	def __init__(self, provider: PaymentProvider):
 		self.provider = provider
@@ -2306,6 +2304,7 @@ main.py
 stripe = Stripe()
 payment_service = PaymentService(stripe)
 payment_service.pay()	
+```
 
 Summary:
 We use abstraction when we have multiple interchangeable implementations of the same behavior.
@@ -2314,11 +2313,3 @@ Concrete classes like Razorpay, Stripe, and PayPal implement this contract.
 PaymentService receives a PaymentProvider through its constructor (dependency injection).
 This decouples PaymentService from the concrete provider, making it flexible, testable, and open for extension without modifying the service code.
 At runtime, we can choose the desired provider in main.py or a factory, and pass it into PaymentService.
-
-
-
-
-
-
-
-
