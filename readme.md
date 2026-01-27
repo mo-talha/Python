@@ -2546,3 +2546,59 @@ To avoid this we can use `if __name__ == “__main__”` inside the file a and i
 Now the interpreter knows that only when a file name == a is executed I have to invoke these functions.
 
 Lets say file a is imported by file b. Now when file b is run then the invoked functions won’t be called automatically because the interpreter knows that those functions in file a must be invoked if a file named a is executed.
+
+### Multiprocessing
+A program is a set of instructions.
+A process is a program under execution, it is nothing but instructions loaded onto RAM for execution.
+A thread is a sub process i.e. a process within a process or a unit process inside a process.
+
+In python multiprocessing refers to multiple programs running parallely on different cores of a CPU. Each process is separate, having its own memory.
+
+### Creating a Process in python
+To implement multiprocessing we use the Process class from the multithreading module, we can create objects of the Process class which will be individual processes.
+ex: main.py
+```
+def do_something():
+	print(“sleeping 1 second”)
+	time.sleep(1)
+	print(“done sleeping 1 second”)
+
+do_something()
+do_something()
+```
+When we execute main.py then both functions will be executed in 2 seconds because the main process executes the methods synchronously that is one at a time.
+
+We can execute these 2 functions independently and at the same time by using multiprocessing. We can create 2 process and these 2 process will be given to 2 separate CPU cores and these CPU cores will execute the processes at the same time so we will have 2 processes finished executing at the same time, the second process will not wait for the first one to finish.
+Ex:
+``` 
+import time
+from multiprocessing import Process
+
+def do_something():
+	print(“sleeping 1 second”)
+	time.sleep(1)
+	print(“done sleeping 1 second”)
+
+if __name__ == “__main__”:
+	p1 = Process(target=do_something)
+	p2 = Process(target=do_something)
+
+	p1.start()
+	p2.start()
+```
+When we execute the main.py file the processes will execute on separate cores at the same time. 
+
+### Few things to keep in mind
+We have to initialize the target method outside the if __name__ == “__main__” block.
+In python a process is executed with its own independent memory, meaning every process will have its own memory. 
+The other processes after getting created will import the main.py as a module into their memory as they won’t have access to the main processes memory.
+
+Now if a target function is defined inside the if block, then when main.py is executed p1 and p2 processes are created but they won’t have access to the target function do_something because, since do_something is defined inside the if block that means the function is only defined when a file named main.py is executed.
+
+Now meanwhile p1 and p2 have the main.py as a module but they won’t see the do_something method in there as the method in main.py is defined only when the main.py is executed, and even when main.py is executed the method do_something is defined inside the memory space of main module and w.k.t that processes do not have access to memory of each other.
+
+Hence if do_something is defined outside the if block inside the main.py then it is not bound that it will only be defined when a file name main.py is executed. As the other processes p1 and p2 import the main.py as a module they will now have access to the do_something method and the processes p1 and p2 can execute it.
+
+Also since we add a condition that if the file being executed is main.py only then initialize do_something, but the subprocesses p1 and p2 import main.py but do_something won’t be defined because we know that if condition blocks automatic invocation of methods inside it and when importing the main
+
+We cannot initialize and run the processes without the if __name__ == “__main__” block in windows and mac os.
