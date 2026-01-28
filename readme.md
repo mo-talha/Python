@@ -2555,7 +2555,7 @@ A thread is a sub process i.e. a process within a process or a unit process insi
 In python multiprocessing refers to multiple programs running parallely on different cores of a CPU. Each process is separate, having its own memory.
 
 ### Creating a Process in python
-To implement multiprocessing we use the Process class from the multithreading module, we can create objects of the Process class which will be individual processes.
+To implement multiprocessing we use the Process class from the multiprocessing module, we can create objects of the Process class which will be individual processes.
 ex: main.py
 ```
 def do_something():
@@ -2601,4 +2601,349 @@ Hence if do_something is defined outside the if block inside the main.py then it
 
 Also since we add a condition that if the file being executed is main.py only then initialize do_something, but the subprocesses p1 and p2 import main.py but do_something won’t be defined because we know that if condition blocks automatic invocation of methods inside it and when importing the main
 
-We cannot initialize and run the processes without the if __name__ == “__main__” block in windows and mac os.
+We cannot initialize and run the processes without the `if __name__ == “__main__”` block in windows and mac os. The problem is spawn. Windows and mac os uses spawn start method meaning, python does not copy the current process instead it:
+1. Starts a fresh python interpreter.
+2. Imports the main module.
+3. Looks for the target function.
+4. Runs it.
+
+That means top-level code runs again.
+
+### What happens without the guard `if __name__ == “__main__”` ?
+
+Python has 3 ways of starting a process:
+1. fork (copies memory of main process) this is done on linux.
+2. spawn imports the main module into the memory. (Windows and Mac OS)
+3. forkserver.
+
+**Note:**
+- Threads share memory.
+- Fork copies memory.
+- Spawn re-imports code.
+
+On windows and mac os, multiprocessing uses spawn start method, which starts a fresh interpreter and re-imports the main module.
+without the `if __name__ == "__main__"` gaurd, top level process creation code would execute again in each child process, causing
+infinite recursion.
+
+## Asyncio
+Asyncio is a standard library in python which helps us write concurrent code. 
+
+### What is concurrent ?
+Concurrency is the ability to handle multiple tasks without blocking the other. They can be achieved in 2 ways:
+
+1. Asyncio - Runs on a single process, single thread achieves concurrency by switching b/w tasks. When the CPU is idle during I/O the task itself yields back control to the event loop and the event loop meanwhile runs another scheduled task on the event loop.
+
+2. Multiprocessing - This is true parallelism where tasks or processes are run at the same time on multiple CPU cores.
+Any task which does not block other tasks, meaning when we place an order for a burger at a restaurant, if the restaurant makes our full burger gives it to us and only then it takes the order of other customer then this is a blocking process or synchronous process where every customer must wait for an order to complete to place its order.
+
+Similarly a restaurant can do it this way, they take your order pass it on to the kitchen and tell you that your order will be ready in sometime and you’ll be served when its complete meanwhile they start taking orders of other customers as well, this is a non blocking process even though everyone has to wait for their orders to be served they won’t have to wait in line to place an order.
+
+Similarly in programming I/O bound tasks where there is a delay expected like network requests, db operations etc Instead of blocking the whole thread the specific code tells the thread that I am waiting for an operation to complete meanwhile you can start doing other tasks, this non blocking code is called concurrent. 
+
+So basically concurrent code means dealing with a lot of things at once but not doing them at the exact same instant.
+
+Asyncio is single threaded and runs on a single process, it uses cooperative multitasking where tasks voluntarily give up control when cpu sits idle waiting. 
+
+For CPU bound tasks we can use multiprocessing because asyncio performs when CPU is idle, but when CPU is not then it's no use using asyncio.
+Multiprocessing is doing multiple things at once using multiple cpu cores, it is true parallelism.
+
+To run async functions we need to start an event loop, we just cannot call an async function normally like a sync function.
+
+Ex:
+```
+async def main():
+	print(“I am main”)
+
+`main() → calling like this is not possible as main is an async function`
+asyncio.run(main())
+```
+The run function is responsible for starting the event loop.
+
+
+### Event loop
+Event loop is the engine that runs and manages asynchronous functions. We can think of it as a scheduler where it schedules and keeps track of all the events and when some event waits the control is returned to the event loop and the event loop starts another scheduled task while the first task waits.
+
+So the run() function is responsible for starting the event loop and running the async tasks and closing the event loop when all the tasks are complete.
+
+### await and __await__
+Awaitable objects are the objects that implement the special __await__ method. An object has to be awaitable to use the await keyword.
+
+This is a special method which every async function implements, the __await__ function basically has the logic to stop that piece of code when it is waiting, give back control to the event loop and come back when it's done waiting.
+
+This is why we cannot await sync functions like time.sleep() because these functions do not have the implementation of the __await__ method and hence they are not fit to work with the event loop.
+
+The await keyword must be used within an async function.
+
+### Awaitables
+In python there are 3 types of awaitables:
+1. Coroutines - created when an async function is called.
+2. Tasks - are wrappers around coroutines that are scheduled on the event loop.
+3. Futures - are low level objects representing eventual results.
+
+In python we do not directly interact with futures we write coroutines and when we schedule them as tasks asyncio uses futures under the hood to track those results. 
+
+### Coroutines
+Any function defined with an async keyword at the start is also known as a coroutine function.
+Ex:
+``` 
+async def greet():
+	print(hi)
+```
+The greet() is also called a coroutine function.
+
+### Coroutine object 
+It is an object that is returned when a coroutine function is called.
+
+Coroutines are similar to generators as they can pause execution and resume later but they are designed to work with an event loop.
+
+Ex:
+```
+async def greet():
+	print(“hi”)
+
+async def main():
+	greet_coroutine = greet()
+	print(greet_coroutine) # this will print the object with its address
+	await greet_coroutine # now it will print hi
+
+asyncio.run(main())
+```
+
+`
+<coroutine object greet at 0x000002334ECFB1C0>
+hi
+`
+
+### Note:
+Also when we await a coroutine object directly like this await greet(), it both gets scheduled on the event loop and is runned to completion at the same time.
+
+Hence we won't get true concurrency. Let’s understand with an example
+
+```
+async get_response(code: str):
+	print(“fetching response for: ”, code)
+	await asyncio.sleep(3)
+	print(“data fetched for: ”, code)
+
+async def main():
+	codes = [“btc”, “eth”, “sol”, “ada”]
+
+	for coin in coins:
+		await get_response(coin)
+
+asyncio.run(main())
+```
+
+Now with the above code. First the event loop will be started by the run() function then the main() coroutine will be scheduled and executed by the event loop. 
+
+Inside the main coroutine the for loop will create a coroutine of the get_response for each coin but every coroutine will be awaited until completion because await is directly attached to the coroutine.
+
+![asyncio](./images/asyncio_1.png)
+
+To truly run the get_response concurrently we will have to use asyncio.create_task() function, this function will first schedule all the coroutines onto the event loop which is different from directly using await for a coroutine which will schedule and wait until completion.
+
+Since the `create_task` will schedule all the coroutines on the event loop we can then await each coroutine separately this way when a coroutine blocks for I/O, the coroutine will give back the control to the event loop and the event loop will start another coroutine as it has other coroutines which are already scheduled by the `create_task()` function. 
+
+This is not possible with directly using await against a coroutine because it will schedule and immediately wait until that coroutine completes execution, this way other coroutines are never scheduled until the current one completes execution, that is why it feels synchronous even after using async await because when a coroutine blocks there are no other coroutines for the event loop to execute as they were never scheduled.
+
+![asyncio](./images/asyncio_2.png)
+
+Also it is not always necessary that the event loop completes the coroutine which was awaited first, it will always go ahead and complete the coroutine which is ready on the event loop.
+
+### Blocking code with asyncio
+When we have a blocking code in an asyncio function then this blocking code will pause the whole event loop since it does not have the implementation in it to give back the control to the event loop when it waits. 
+Ex: When we use time.sleep() which is a non async function inside an async function then it will block the whole event loop and the execution becomes synchronous.
+
+async def fetch(code: str):
+	print(“fetching data for: ”,code)
+	time.sleep(3)
+	print(“completed fetching data for: ”, code)
+
+async def main():
+	coins = [“btc”, “eth”, “sol”, “ada”]
+
+	tasks = [asyncio.create_task(fetch(code)) for code in coins]
+
+	for task in tasks:
+		await task
+
+tasks = [asyncio.create_task(fetch(code)) for code in coins]
+The above line does create and schedule all the coroutines for each coin in coins, when the for loop starts and awaits for each task it goes in the task and encounters time.sleep(3), now w.k.t time.sleep() is not an awaitable hence it does not give back control to the event loop and keeps the event loop blocked and after 3 seconds is complete it finishes the rest of the code in the 1st task, only then the event loop is able to move to the 2nd task and so on, hence we get a sync flow and not async or concurrent flow.
+
+Note:
+It is bad practice to include a blocking code inside an async function.
+
+There are cases where we won’t have async functions or awaitables but we need to run them concurrently hence to do this we can make the sync or blocking functions run concurrently using threads and processes.
+
+Using Threads
+# sync code
+def fetch(code: str):
+print(“fetching data for: ”,code)
+	time.sleep(3)
+	print(“completed fetching data for: ”, code)
+
+async def main():
+	coins = [“btc”, “eth”, “sol”, “ada”]
+
+	tasks = [asyncio.create_task(asyncio.to_thread(fetch, code)) for code in coins]
+
+	for task in tasks:
+		await task
+
+Here we do create coroutines of the sync function fetch and schedule them using create_task function but we have to make them futures which are also awaitables to do this we use the to_thread function of the asyncio library.
+
+Now when we await these coroutines,
+The to_thread function spawns an os thread using the event loop's thread pool via the ThreadPoolExecutor.
+The blocking fetch function runs in this thread separately and not inside the main event loop thread.
+The to_thread returns an awaitable coroutine to us, meaning we can await it like any other async function.
+While fetch runs in another thread, the event loop thread stays free to run other tasks concurrently.
+
+Using Processes
+We can run blocking code asynchronously using processes. We import the ProcessPoolExecutor from concurrent.futures. We get the running event loop using the asyncio method get_running_loop().
+
+We create an object of ProcessPoolExecutor as executor, then we can use the method of running loop, run_in_executor, basically we are trying to spin up a process to run our blocking function inside the process pool, also called as executor here. 
+
+The method run_in_executor(executor, blocking function, args) will create a separate process which will run the blocking function with the given arguments and it will return in a future object. Since future is an awaitable just like tasks and coroutines, this future can be awaited and the future will return any values if the blocking code has any return values.
+ run_in_executor submits the function to the executors process pool, if no executor is passed it uses the default thread pool not processes.
+
+Even though the future returned by run_in_executor is awaitable, await suspends the coroutine until that process finishes.
+The process does not share memory with the main process(unlike threads).
+
+import requests
+import asyncio
+from concurrent.futures import ProcessPoolExecutor
+
+def fetch(start: int) → None:
+	print(“fetching data for start: ”, start)
+response = requests.get(“https://api.coinmarketcap.com/pg=start”)
+print(“response for page 1: ”, response)
+
+async def main():
+	loop = asyncio.get_running_loop()
+
+	with ProcessPoolExecutor() as executor:
+		# asking the loop to run the following inside the process pool
+		process1 = loop.run_in_executor(executor, fetch, 1)
+	process1 = loop.run_in_executor(executor, fetch, 100)
+
+	await process1
+	await process2
+
+if __name__ == “__main__”:
+	asyncio.run(main())
+
+async def main():
+	loop = asyncio.get_running_loop()
+
+	with ProcessPoolExecutor() as executor:
+		# asking the loop to run the following inside the process pool
+		process1 = loop.run_in_executor(executor, fetch, 1)
+	await process1
+
+	process2 = loop.run_in_executor(executor, fetch, 100)
+	await process2
+
+The above code will be a synchronous execution, because as soon as we create a process we await it, so when we await a future or coroutine it waits until the process is completed before moving forward, hence the process2 won't even be scheduled.
+
+Creating and Running coroutines and tasks using gather
+gather() is a method using which we can avoid manual work of creating and awaiting coroutines or tasks. We can create a list of coroutines or tasks and instead of manually awaiting each one like we did above we can simply pass the list of coroutines or tasks (futures) to gather as an argument with an asterisk.
+
+The coroutines will be wrapped in a future and scheduled in the event loop.
+gather returns a future with the results of given coroutines/futures.
+They will not be necessarily scheduled in the same order as passed in.
+coroutines - functions starts with async keyword
+tasks - wrapper around coroutines, coroutines scheduled on the event loop, a subclass of the future class.
+future - a low level object representing a result that will be available later
+Every task is a future subclass but not every future is a task.
+
+gather() with coroutines
+import requests, asyncio
+
+async def fetch(st: int):
+	print(“fetching data from start page: ”, st)
+response = requests.get(“https://api.coinmarketcap.com/pg=st”)
+print(f“response for page {st}: {response}”)
+
+range = [1, 100, 200, 300]
+coroutines = [fetch(st) for st in range]
+
+await asyncio.gather(*coroutines, return_exceptions=True) 
+# if the coroutines return any values we can store them in a variable like
+# results = await asyncio.gather(*coroutines, return_exceptions=True) 
+
+The param return_exceptions=False/True
+So by default gather() has this param as False what this does is,
+If any task raises an exception, asyncio.gather will immediately propagate that exception.
+All other tasks that are still running will be cancelled.
+You’ll only see the first exception that occurred.
+
+async def get_response(page: int):
+	print(“fetching response for page: ”, page)
+	await asyncio.sleep(3)
+	print(“data for page: ”, page)
+
+async def process_response():
+	print(“processing response”)
+	raise ValueError(“Unable to process a value in the response”)
+
+async def main():
+	coroutine1 = get_response(1)
+	coroutine2 = process_response()
+	coroutine3 = get_response(100)
+
+	results = asyncio.gather(coroutine1, coroutine2, coroutine3, return_exceptions=True)
+	return results
+
+if __name__== “__main__”:
+	results = asyncio.run(main())
+	print(results)
+
+# In the above code the exception will thrown or printed on the terminal and all the running tasks will be cancelled, this can be used when tasks in the list of tasks are dependent on the previous tasks or we want the entire operation to stop when something fails.
+We can consider this mode as transactions, when one thing fails everything is roll backed.
+
+Terminal:
+fetching response for page: 1
+processing response
+fetching response for page: 100
+ValueError: Unable to process response
+
+We can see that the final statement from the get_response method is not printed which gets printed on successfully getting the response, this is because due to return_exceptions=False in gather function all the tasks were cancelled due to ValueError raised by process_response method.
+
+if return_exceptions=True, then exceptions are collected as results not raised, each task's result or exception is returned in the same position as it was passed in. No other tasks are cancelled when one fails.
+
+We can use this mode when we want all tasks to complete regardless of whether some fail. You’re handling results individually. We can consider this as batch mode even if some fail, get whatever succeeded. 
+
+Tasks with gather
+If we only care about getting the results we can create a list of coroutines and unpack them in the gather function with an asterisk.
+If we want to monitor and interact with the tasks in any way before they complete we can create a list of tasks and unpack these tasks inside the gather function.
+
+tasks = [asyncio.create_task(get_response(page)) for page in pages]
+results = asyncio.gather(*tasks, return_exceptions=True)
+return results
+
+Task Group
+A task group is a safer way of managing multiple concurrent tasks. The group automatically schedules, supervises and awaits all tasks we create within its block.
+Task group enforces structured concurrency all child tasks must finish successfully or cancel before the parent continues.
+Task group can be used to create a group of tasks and task group takes the responsibility of scheduling these tasks on the event loop and awaiting them. It awaits the tasks once it exits the statement of creating the group.
+
+Task group is also like gather when return_exception is set to False, when one task in the group raises an exception all the other running tasks in the group are cancelled and the exception is raised. 
+Task group must be used when we want all the tasks to run as a group or fail if any one of the task from the group fails.
+
+async with asyncio.TaskGroup() as tg:
+	tasks = [tg.create_task(get_response(page)) for page in pages]
+
+I/O bound
+Tasks which wait for or depend or need external things like databases, http requests etc
+
+CPU bound
+Tasks which depend or need CPU like processing, calculating etc
+
+**Note:
+Check why do we create a session of requests and why every new request.get creates a new session for every url, check if sessions are thread safe and also if request.get is thread safe
+Check why we need to use semaphores and how they help, always use a limit for no of requests being sent concurrently to not overuse our own resources and not bombard the server from where we are requesting.
+For parallel or multi processing we can use a fixed number of workers, to keep the use of our cores efficient and not drain all the resources at once. 
+
+Always try finding libraries for async tasks like we have aiohttp, httpx for sending network requests concurrently if we do not have any libraries only then we will use threads.
+
+To know where our code is spending more time in I/O or CPU bound tasks we can use a profiler like
+scalene this will let us know the time spent on I/O and CPU tasks.
