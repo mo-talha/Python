@@ -2754,6 +2754,7 @@ Also it is not always necessary that the event loop completes the coroutine whic
 When we have a blocking code in an asyncio function then this blocking code will pause the whole event loop since it does not have the implementation in it to give back the control to the event loop when it waits. 
 Ex: When we use time.sleep() which is a non async function inside an async function then it will block the whole event loop and the execution becomes synchronous.
 
+```
 async def fetch(code: str):
 	print(“fetching data for: ”,code)
 	time.sleep(3)
@@ -2767,18 +2768,21 @@ async def main():
 	for task in tasks:
 		await task
 
-tasks = [asyncio.create_task(fetch(code)) for code in coins]
-The above line does create and schedule all the coroutines for each coin in coins, when the for loop starts and awaits for each task it goes in the task and encounters time.sleep(3), now w.k.t time.sleep() is not an awaitable hence it does not give back control to the event loop and keeps the event loop blocked and after 3 seconds is complete it finishes the rest of the code in the 1st task, only then the event loop is able to move to the 2nd task and so on, hence we get a sync flow and not async or concurrent flow.
+```
 
-Note:
+`tasks = [asyncio.create_task(fetch(code)) for code in coins]`
+The above line does create and schedule all the coroutines for each coin in coins, when the for loop starts and awaits for each task it goes in the task and encounters time.sleep(3), now w.k.t time.sleep() is not an awaitable hence it does not give back control to the event loop and keeps the event loop blocked and after 3 seconds is complete it finishes the rest of the code in the 1st task runs, only then the event loop is able to move to the 2nd task and so on, hence we get a sync flow and not async or concurrent flow.
+
+### Note:
 It is bad practice to include a blocking code inside an async function.
 
 There are cases where we won’t have async functions or awaitables but we need to run them concurrently hence to do this we can make the sync or blocking functions run concurrently using threads and processes.
 
-Using Threads
+### Using Threads
 # sync code
+```
 def fetch(code: str):
-print(“fetching data for: ”,code)
+	print(“fetching data for: ”,code)
 	time.sleep(3)
 	print(“completed fetching data for: ”, code)
 
@@ -2789,22 +2793,23 @@ async def main():
 
 	for task in tasks:
 		await task
+```
 
 Here we do create coroutines of the sync function fetch and schedule them using create_task function but we have to make them futures which are also awaitables to do this we use the to_thread function of the asyncio library.
 
-Now when we await these coroutines,
+### Now when we await these coroutines,
 The to_thread function spawns an os thread using the event loop's thread pool via the ThreadPoolExecutor.
 The blocking fetch function runs in this thread separately and not inside the main event loop thread.
 The to_thread returns an awaitable coroutine to us, meaning we can await it like any other async function.
 While fetch runs in another thread, the event loop thread stays free to run other tasks concurrently.
 
-Using Processes
+### Using Processes
 We can run blocking code asynchronously using processes. We import the ProcessPoolExecutor from concurrent.futures. We get the running event loop using the asyncio method get_running_loop().
 
 We create an object of ProcessPoolExecutor as executor, then we can use the method of running loop, run_in_executor, basically we are trying to spin up a process to run our blocking function inside the process pool, also called as executor here. 
 
 The method run_in_executor(executor, blocking function, args) will create a separate process which will run the blocking function with the given arguments and it will return in a future object. Since future is an awaitable just like tasks and coroutines, this future can be awaited and the future will return any values if the blocking code has any return values.
- run_in_executor submits the function to the executors process pool, if no executor is passed it uses the default thread pool not processes.
+run_in_executor submits the function to the executors process pool, if no executor is passed it uses the default thread pool not processes.
 
 Even though the future returned by run_in_executor is awaitable, await suspends the coroutine until that process finishes.
 The process does not share memory with the main process(unlike threads).
