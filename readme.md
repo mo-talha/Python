@@ -2925,10 +2925,11 @@ We can use this mode when we want all tasks to complete regardless of whether so
 ### Tasks with gather
 If we only care about getting the results we can create a list of coroutines and unpack them in the gather function with an asterisk(*).
 If we want to monitor and interact with the tasks in any way before they complete we can create a list of tasks and unpack these tasks inside the gather function.
-
+```
 tasks = [asyncio.create_task(get_response(page)) for page in pages]
 results = asyncio.gather(*tasks, return_exceptions=True)
 return results
+```
 
 ### Task Group
 A task group is a safer way of managing multiple concurrent tasks. The group automatically schedules, supervises and awaits all tasks we create within its block.
