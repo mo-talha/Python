@@ -2907,7 +2907,7 @@ if __name__== “__main__”:
 	results = asyncio.run(main())
 	print(results)
 ```
-# In the above code the exception will be thrown or printed on the terminal and all the running tasks will be cancelled, this can be used when tasks in the list of tasks are dependent on the previous tasks or we want the entire operation to stop when something fails. We can consider this mode as transactions, when one thing fails everything is roll backed.
+In the above code the exception will be thrown or printed on the terminal and all the running tasks will be cancelled, this can be used when tasks in the list of tasks are dependent on the previous tasks or we want the entire operation to stop when something fails. We can consider this mode as transactions, when one thing fails everything is roll backed.
 `
 Terminal:
 fetching response for page: 1
