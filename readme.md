@@ -2850,7 +2850,7 @@ async def main():
 
 The above code will be a synchronous execution, because as soon as we create a process we await it, so when we await a future or coroutine it waits until the process is completed before moving forward, hence the process2 won't even be scheduled.
 
-Creating and Running coroutines and tasks using gather
+### Creating and Running coroutines and tasks using gather
 gather() is a method using which we can avoid manual work of creating and awaiting coroutines or tasks. We can create a list of coroutines or tasks and instead of manually awaiting each one like we did above we can simply pass the list of coroutines or tasks (futures) to gather as an argument with an asterisk.
 
 The coroutines will be wrapped in a future and scheduled in the event loop.
@@ -2862,12 +2862,14 @@ future - a low level object representing a result that will be available later
 Every task is a future subclass but not every future is a task.
 
 gather() with coroutines
+```
 import requests, asyncio
 
 async def fetch(st: int):
 	print(“fetching data from start page: ”, st)
-response = requests.get(“https://api.coinmarketcap.com/pg=st”)
-print(f“response for page {st}: {response}”)
+
+	response = requests.get(“https://api.coinmarketcap.com/pg=st”)
+	print(f“response for page {st}: {response}”)
 
 range = [1, 100, 200, 300]
 coroutines = [fetch(st) for st in range]
@@ -2875,13 +2877,15 @@ coroutines = [fetch(st) for st in range]
 await asyncio.gather(*coroutines, return_exceptions=True) 
 # if the coroutines return any values we can store them in a variable like
 # results = await asyncio.gather(*coroutines, return_exceptions=True) 
+```
 
 The param return_exceptions=False/True
 So by default gather() has this param as False what this does is,
-If any task raises an exception, asyncio.gather will immediately propagate that exception.
+If any task raises an exception, `asyncio.gather()` will immediately propagate that exception.
 All other tasks that are still running will be cancelled.
 You’ll only see the first exception that occurred.
 
+```
 async def get_response(page: int):
 	print(“fetching response for page: ”, page)
 	await asyncio.sleep(3)
@@ -2902,15 +2906,15 @@ async def main():
 if __name__== “__main__”:
 	results = asyncio.run(main())
 	print(results)
-
-# In the above code the exception will thrown or printed on the terminal and all the running tasks will be cancelled, this can be used when tasks in the list of tasks are dependent on the previous tasks or we want the entire operation to stop when something fails.
-We can consider this mode as transactions, when one thing fails everything is roll backed.
-
+```
+# In the above code the exception will be thrown or printed on the terminal and all the running tasks will be cancelled, this can be used when tasks in the list of tasks are dependent on the previous tasks or we want the entire operation to stop when something fails. We can consider this mode as transactions, when one thing fails everything is roll backed.
+`
 Terminal:
 fetching response for page: 1
 processing response
 fetching response for page: 100
 ValueError: Unable to process response
+`
 
 We can see that the final statement from the get_response method is not printed which gets printed on successfully getting the response, this is because due to return_exceptions=False in gather function all the tasks were cancelled due to ValueError raised by process_response method.
 
@@ -2918,37 +2922,37 @@ if return_exceptions=True, then exceptions are collected as results not raised, 
 
 We can use this mode when we want all tasks to complete regardless of whether some fail. You’re handling results individually. We can consider this as batch mode even if some fail, get whatever succeeded. 
 
-Tasks with gather
-If we only care about getting the results we can create a list of coroutines and unpack them in the gather function with an asterisk.
+### Tasks with gather
+If we only care about getting the results we can create a list of coroutines and unpack them in the gather function with an asterisk(*).
 If we want to monitor and interact with the tasks in any way before they complete we can create a list of tasks and unpack these tasks inside the gather function.
 
 tasks = [asyncio.create_task(get_response(page)) for page in pages]
 results = asyncio.gather(*tasks, return_exceptions=True)
 return results
 
-Task Group
+### Task Group
 A task group is a safer way of managing multiple concurrent tasks. The group automatically schedules, supervises and awaits all tasks we create within its block.
 Task group enforces structured concurrency all child tasks must finish successfully or cancel before the parent continues.
 Task group can be used to create a group of tasks and task group takes the responsibility of scheduling these tasks on the event loop and awaiting them. It awaits the tasks once it exits the statement of creating the group.
 
 Task group is also like gather when return_exception is set to False, when one task in the group raises an exception all the other running tasks in the group are cancelled and the exception is raised. 
 Task group must be used when we want all the tasks to run as a group or fail if any one of the task from the group fails.
-
+```
 async with asyncio.TaskGroup() as tg:
 	tasks = [tg.create_task(get_response(page)) for page in pages]
+```
 
-I/O bound
+### I/O bound
 Tasks which wait for or depend or need external things like databases, http requests etc
 
-CPU bound
+### CPU bound
 Tasks which depend or need CPU like processing, calculating etc
 
-**Note:
+### **Note:
 Check why do we create a session of requests and why every new request.get creates a new session for every url, check if sessions are thread safe and also if request.get is thread safe
 Check why we need to use semaphores and how they help, always use a limit for no of requests being sent concurrently to not overuse our own resources and not bombard the server from where we are requesting.
 For parallel or multi processing we can use a fixed number of workers, to keep the use of our cores efficient and not drain all the resources at once. 
 
 Always try finding libraries for async tasks like we have aiohttp, httpx for sending network requests concurrently if we do not have any libraries only then we will use threads.
 
-To know where our code is spending more time in I/O or CPU bound tasks we can use a profiler like
-scalene this will let us know the time spent on I/O and CPU tasks.
+To know where our code is spending more time in I/O or CPU bound tasks we can use a profiler like scalene this will let us know the time spent on I/O and CPU tasks.
