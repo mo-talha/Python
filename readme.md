@@ -2939,8 +2939,9 @@ Task group can be used to create a group of tasks and task group takes the respo
 Task group is also like gather when return_exception is set to False, when one task in the group raises an exception all the other running tasks in the group are cancelled and the exception is raised. 
 Task group must be used when we want all the tasks to run as a group or fail if any one of the task from the group fails.
 ```
-async with asyncio.TaskGroup() as tg:
-	tasks = [tg.create_task(get_response(page)) for page in pages]
+def main():
+	async with asyncio.TaskGroup() as tg:
+		tasks = [tg.create_task(get_response(page)) for page in pages]
 ```
 
 ### I/O bound
