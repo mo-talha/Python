@@ -2958,3 +2958,57 @@ For parallel or multi processing we can use a fixed number of workers, to keep t
 Always try finding libraries for async tasks like we have aiohttp, httpx for sending network requests concurrently if we do not have any libraries only then we will use threads.
 
 To know where our code is spending more time in I/O or CPU bound tasks we can use a profiler like scalene this will let us know the time spent on I/O and CPU tasks.
+
+## Understanding http sessions using requests, httpx or aihttp
+### TCP
+A TCP connection is established if a 3 way handshake (SYN → SYN-ACK → SYN) is successful b/w the client (us) and the server, data can now flow reliably ordered, acknowledged, retransmitted if needed, this connection is persistent until one side closes it or it times out.
+But this is not yet the http session.
+
+### Http layer view
+In HTTP/1.0 a connection was typically closed after each request.
+In HTTP/1.1 and newer, we have persistent connections (“Keep Alive”), which allow multiple HTTP requests over the same TCP connection.
+So one TCP connection can carry multiple HTTP requests and responses.
+This reuse is what libraries like requests.session or aiohttp.ClientSession take advantage of.
+
+### Application view
+When we see `session = requests.session()`, this session is an application level abstraction it manages:
+1. One or more TCP connections (connection pool)
+2. Cookies
+3. Headers and Authentication
+4. Connection reuse
+It uses TCP connection underneath but its not the same as TCP connection, it's a higher level concept built on top of them.
+
+So,
+After a TCP handshake the connection is established not yet a session.
+A session object in python is a software wrapper around one or more TCP connections.
+A TCP connection can exist without cookies, authentication and user state.
+A session in HTTP or webapps implies continuity, reusing connections and user state.
+ 
+### When we send out a http request from our pc to an external api ?
+1. A TCP handshake takes place b/w our pc and the server of the external api and a TCP connection is established. TCP is a channel for communication b/w our pc and the external server, 2 sockets one from our pc which has a port and an ip and the servers socket which has a port and an ip get connected.
+
+2. http is built on top of TCP so the http request uses one of these TCP connections, sends requests and receives responses from the external user.
+
+### What are timeouts ?
+A timeout is a way to wait for a process to happen in a given time if it does not happen it fails safely without waiting forever.
+Timeouts can happen at different stages
+1. When waiting to establish a TCP connection with a server.
+2. When waiting for a response after http request.
+
+### What are connection pools ?
+A connection pool is a place where established connections are stored which can be reused. The connection pool can be of a db which stores the connection to a db, a server which stores the TCP connection to a server etc.
+
+### Why are connection pools are used ?
+These pools maintain a warm standby of connections, if we look under the hood how a client connects to a server a TCP handshake
+is expensive SYN -> SYN-ACK -> SYN and for every http request this process has to take place instead of doing this we can reuse the established connection or session for subsequent requests, this way we will avoid the expensice TCP handshake.
+
+Similarly in databases we have to establish a connection for a session, then in that session we write our queries etc and commit the session and finally close the session. Instead of doing this for every db request we can create a session and store it in the connection pool and reuse these sessions for subsequent queries instead of creating a new session every time.
+
+We can also limit the number of sessions a db connection pool can have like 20, if 100 requests come in 20 will be served instantly while others wait for a session to be free, once a session is free 21st request is served and so on, this way the DB is protected from managing multiple connections which eventually eats up a lot of CPU and slows down the db or even takes it down.
+
+### Mental Model
+TCP helps to establish connection, http defines how messages flow over it, a session manages reuse and state across requests and
+timeouts exist at every layer to prevent waiting forever.
+
+** Try understanding and implement what he is saying
+We asked all our internship applicants to create a simple CRUD wallet app, and every single one missed how threads and race conditions work. All of them, while updating the wallet balance, fetched the balance from the database, performed calculations in the app, and then updated the database. Although expecting university students to know everything is a bit too much, understanding these things makes you stand out.
