@@ -3010,5 +3010,44 @@ We can also limit the number of sessions a db connection pool can have like 20, 
 TCP helps to establish connection, http defines how messages flow over it, a session manages reuse and state across requests and
 timeouts exist at every layer to prevent waiting forever.
 
+## Multithreading
+```
+def greet():
+	time.sleep(3)
+	print("hi")
+
+if __name__ == "__main__":
+	greet()
+	greet()
+```
+The above code will execute greet twice but one at a time so total time taken will be 3 seconds, because its syncrhronous.
+
+```
+from multithreading import Thread
+
+def greet():
+	time.sleep(3)
+	print("hi")
+
+if __name__ == "__main__":
+	t1 = Thread(greet)
+	t2 = Thread(greet)
+
+	start = time.perf_counter()
+	t1.start()
+	t2.start()
+
+	t1.join()
+	t2.join()
+
+	finish = time.perf_counter()
+
+	print("total time:",round(finish-start, 2)) 
+```
+
+The above will finish executing in 3 seconds unlike the previous version which finished in 6s. Here we use 2 threads t1 and t2 to execute greet even though they don't execute greet parallely but they will do it in a way which will look like both functions ran parallely. 
+
+This is because t1 will execute the function greet and when it encounters `time.sleep` it will give up the GIL, then t2 will acquire the GIL and execute greet and when t2 encounters `time.sleep` then even t2 will give up the GIL this is because t1 and t2 do not need to the interpreter to wait they only need the interpreter to execute the code. 
+
 ** Try understanding and implement what he is saying
 We asked all our internship applicants to create a simple CRUD wallet app, and every single one missed how threads and race conditions work. All of them, while updating the wallet balance, fetched the balance from the database, performed calculations in the app, and then updated the database. Although expecting university students to know everything is a bit too much, understanding these things makes you stand out.
