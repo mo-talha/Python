@@ -3099,7 +3099,43 @@ del p2
 
 # Above we are deleting the reference variable p1 and p2 towards the objects Person("Yaseen") and Person("Talha")
 # But the objects refcount is still 1 because friend variables inside the Person objects still point at each other hence this #will be cleared by the GC.
-``` 
+```
+
+3. Final Cleanup
+- At program termination Python runs final GC.
+- All memory is freed (even cycles).
+- `__del__` methods are called if they exist.
+
+```
+[Program Starts]
+    │
+    ├───[Object Created] → refcount = 1
+    │        │
+    │        ├── [Reference Added] → refcount++
+    │        │
+    │        └── [Reference Removed] → refcount--
+    │                │
+    │                └── refcount == 0 → IMMEDIATE CLEANUP
+    │
+    ├───[700+ Objects Allocated] → GC Runs (Gen 0)
+    │
+    ├───[Program Running] → Periodic GC as needed
+    │
+    └───[Program Ends] → FINAL GC → All Memory Freed
+```
+
+### Generational GC in Python
+1. What are generations in Python's GC?
+Python uses 3 generations (0, 1, 2) based on the observation that most objects die young. New objects start in Gen 0, and if they survive collections, they get promoted to older generations.
+
+2. Why use generational GC?
+For performance. Checking only young objects (Gen 0) frequently catches 80-90% of garbage quickly. Old objects (Gen 2) are checked rarely since they're likely to live longer.
+
+3. What are the default thresholds?
+(700, 10, 10) - meaning: Gen 0 GC after 700 allocations, Gen 1 after 10 Gen 0 collections, Gen 2 after 10 Gen 1 collections.
+
+4. Can you tune the GC?
+Yes, with gc.set_threshold() you can adjust for different workloads. For example, a long-running server might use higher thresholds to reduce GC pauses.
 
 ** Try understanding and implement what he is saying
 We asked all our internship applicants to create a simple CRUD wallet app, and every single one missed how threads and race conditions work. All of them, while updating the wallet balance, fetched the balance from the database, performed calculations in the app, and then updated the database. Although expecting university students to know everything is a bit too much, understanding these things makes you stand out.
