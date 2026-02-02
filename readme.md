@@ -3049,5 +3049,57 @@ The above will finish executing in 3 seconds unlike the previous version which f
 
 This is because t1 will execute the function greet and when it encounters `time.sleep` it will give up the GIL, then t2 will acquire the GIL and execute greet and when t2 encounters `time.sleep` then even t2 will give up the GIL this is because t1 and t2 do not need to the interpreter to wait they only need the interpreter to execute the code. 
 
+## Memory Management in Python
+1. Primary Mechanism: Reference Counting
+- Every object has a refecount integer
+- When refcount == 0 immediate cleanup
+```
+a = [1, 2, 3]
+b = a
+
+del a
+del b
+```
+
+In the above code the ref count of list [1, 2, 3] is 2 a and b pointing at it, when we del both references a and b, when refcount == 0 the list is automatically cleared from the memory.
+
+2. Secondary Mecahnism: Garbage Collection
+- Runs periodically based on allocation thresholds
+- Detects and cleans reference cycles
+
+```
+class Person:
+	def __init__(self, name):
+		self.name = name
+		self.friend = None
+	
+	def __del__(self):
+		print(f"Deleting {self.name}")
+
+p1 = Person("Yaseen")
+p2 = Person("Talha")
+
+# Current state
+# p1 -> Person("Yaseen")
+# p2 -> Person("Talha")
+
+p1.friend = p2
+p2.friend = p1
+
+# Current state
+# p1 -> Person("Yaseen") <- object b friend
+# p2 -> Person("Talha") <- object a friend
+
+del p1
+del p2
+
+# Current state
+# Person("Yaseen") <- object b friend
+# Person("Talha") <- object a friend
+
+# Above we are deleting the reference variable p1 and p2 towards the objects Person("Yaseen") and Person("Talha")
+# But the objects refcount is still 1 because friend variables inside the Person objects still point at each other hence this #will be cleared by the GC.
+``` 
+
 ** Try understanding and implement what he is saying
 We asked all our internship applicants to create a simple CRUD wallet app, and every single one missed how threads and race conditions work. All of them, while updating the wallet balance, fetched the balance from the database, performed calculations in the app, and then updated the database. Although expecting university students to know everything is a bit too much, understanding these things makes you stand out.
