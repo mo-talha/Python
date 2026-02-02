@@ -3125,16 +3125,16 @@ del p2
 ```
 
 ### Generational GC in Python
-1. What are generations in Python's GC?
+### 1. What are generations in Python's GC?
 Python uses 3 generations (0, 1, 2) based on the observation that most objects die young. New objects start in Gen 0, and if they survive collections, they get promoted to older generations.
 
-2. Why use generational GC?
+### 2. Why use generational GC?
 For performance. Checking only young objects (Gen 0) frequently catches 80-90% of garbage quickly. Old objects (Gen 2) are checked rarely since they're likely to live longer.
 
-3. What are the default thresholds?
+### 3. What are the default thresholds?
 (700, 10, 10) - meaning: Gen 0 GC after 700 allocations, Gen 1 after 10 Gen 0 collections, Gen 2 after 10 Gen 1 collections.
 
-4. Can you tune the GC?
+### 4. Can you tune the GC?
 Yes, with gc.set_threshold() you can adjust for different workloads. For example, a long-running server might use higher thresholds to reduce GC pauses.
 
 ** Try understanding and implement what he is saying
