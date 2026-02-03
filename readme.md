@@ -3057,6 +3057,89 @@ So when python main.py
 - The main thread acquires the GIL a lock to the interpreter so that when it starts executing the code no other thread accesses the interpreter.
 - If there are multiple threads within a process then they will have to wait for a switch which will release the GIL and then the next thread can acquire it.
 
+### What is a Race Condition ?
+A race condition happens when multiple threads access shared data at the same time, and the outcome depends on which thread finishes first. This can lead to corrupted data, crashes, or incorrect results.
+
+code example:
+```
+import time
+import threading
+
+count = 0
+
+def increment_count():
+	global count
+
+	# Reading the count
+	current = count
+
+	# Allowing a thread switch, so that the GIL is released and other thread also reads the count value before the update
+	time.sleep(1)
+
+	count = current + 1
+
+t1 = threading.Thread(target=increment_count)
+t2 = threading.Thread(target=increment_count)
+
+t1.start()
+t2.start()
+
+t1.join()
+t2.join()
+
+print(count)
+```
+
+Since 2 threads are updating the count the count must be 2, but the output will be 1 because
+t1 reads the count as 0 then sleeps
+t2 reads the count as 0 then sleeps
+t1 updates the count to 1
+t2 updates and overwrites the count to 1
+
+This happened because 2 threads read a shared source at the same time i.e. before update.
+
+### How to avoid Race Conditions ?
+- We can use atomic values, in languages like Java, C++ there is AtomicInteger, AtomicFloat etc 2 threads cannot read these values at the same time, only one thread can. 
+
+- But in python there are no atomic types, instead the threads can use a lock, meaning when t1 is updating it can lock the whole process from reading, modifying to updating with this lock other thread cannot read the count variable while t1 holds the lock.
+
+code example:
+```
+import time
+import threading
+
+count = 0
+lock = threading.Lock()
+
+def increment_count():
+	global count
+	
+	with lock:
+		# Reading the count
+		current = count
+
+		time.sleep(1)
+
+		# updating
+		count = current + 1
+
+t1 = threading.Thread(target=increment_count)
+t2 = threading.Thread(target=increment_count)
+
+t1.start()
+t2.start()
+
+t1.join()
+t2.join()
+
+print(count)
+```
+
+Now even when t1 sleeps t2 cannot access read the count variable as t1 has locked it, t2 will only be able to read it when t1 releases the lock.
+
+### What is a Deadlock ?
+
+
 ## GIL (Global Interpreter Lock)
 It is a lock used to acquire the interpreter by a thread. In python only single thread can execute the bytecode via the interpreter hence the threads acquire the GIL which gives them access to the interpreter while thread A has the GIL thread B needs to wait for a switch until then thread B cannot execute its bytecode.
 
