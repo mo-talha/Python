@@ -3067,6 +3067,106 @@ Python was around even before multicore CPUs hence the it was designed for singl
 
 Pythons interpreter is not thread safe meaning multiple threads can cause poor memory management especially the refcount system. To avoid doing a whole rework for multicore CPUs python's author introduced a GLOBAL LOCK called the GIL to the interpreter to protect the memory management in python. The GIL makes sure that only one thread has access to the interpreter at a given time.
 
+### What happens if there is no GIL in python ?
+```
+a = 1
+```
+
+Thread A
+```
+b = a
+```
+
+Thread B
+```
+c = a
+```
+
+Now w.k.t the refcount of object 1 should be 3 because a,b and c all point to the same object in the memory. But this is only possible when the interpreter is protected by the GIL
+Thread A  
+- acquires the lock
+- reads the refcount of 1 as 1 increments it to 2 because of b = a 
+- releases the GIL
+
+Thread B
+- acquires the lock
+- reads the refcount of 1 as 2 as it was incremented by thread A, thread B adds one to the refcount making it 3.
+- releases the GIL
+
+Without GIL
+Thread 1: Read list.refcount = 1
+Thread 2: Read list.refcount = 1  ← Both read same value!
+Thread 1: Calculate 1 + 1 = 2
+Thread 2: Calculate 1 + 1 = 2     ← Both calculate same!
+Thread 1: Write list.refcount = 2
+Thread 2: Write list.refcount = 2 ← Should be 3! CORRUPTED!
+
+Result: Refcount shows 2, but there are actually 3 references!
+If 2 references are deleted, refcount goes to 0 → Memory freed while still in use!
+
+code example:
+```
+import threading
+import time
+
+class UnsafeRefCount:
+    def __init__(self, name):
+        self.name = name
+        self.refcount = 1
+        
+    def increment_refcount(self):
+		current = self.refcount
+		time.sleep(0.00001)
+		self.refcount = current + 1
+
+lis = UnsafeRefCount("my_list")
+
+def t1_task():
+    b = lis    
+    lis.increment_refcount()
+    print(f"Thread 1 thinks refcount: {lis.refcount}")
+    
+def t2_task():
+    c= lis
+    lis.increment_refcount()
+    print(f"Thread 2 thinks refcount: {lis.refcount}")
+
+t1 = threading.Thread(target=t1_task)
+t2 = threading.Thread(target=t2_task)
+
+t1.start()
+t2.start()
+
+t1.join()
+t2.join()
+```
+
+```
+Output:
+t1 
+- Runs t1_task 
+- points b to lis and runs inrement_refcount
+- inside increment_refcount reads current refcount
+- t1 goes to sleep, gives up the GIL
+
+t2
+- Runs t2_task 
+- points b to lis and runs inrement_refcount
+- inside increment_refcount reads current refcount
+- t2 goes to sleep, gives up the GIL
+
+t1
+- Acquires the GIL after sleep
+- Updates the refcount, it had read the refcount as 1 so current = 1, refcount = current + 1 = 2
+
+t2
+- Acquires the GIL after sleep
+- Updates the refcount, it had read the refcount as 1 so current = 1, refcount = current + 1 = 2
+- Overwrites the refcount as 2 again.
+```
+
+With GIL when t1 acquires the GIL t2 cannot read the refcount as it has to wait, in the meantime t1 updates the refcount to 2 and then t2 acuqires the GIL and sees refcount as 2 and the increments it to 3.
+
 ## Memory Management in Python
 1. Primary Mechanism: Reference Counting
 - Every object has a refecount integer
