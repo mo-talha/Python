@@ -3049,6 +3049,21 @@ The above will finish executing in 3 seconds unlike the previous version which f
 
 This is because t1 will execute the function greet and when it encounters `time.sleep` it will give up the GIL, then t2 will acquire the GIL and execute greet and when t2 encounters `time.sleep` then even t2 will give up the GIL this is because t1 and t2 do not need to the interpreter to wait they only need the interpreter to execute the code. 
 
+Basically GIL switches during I/O operations, waiting tasks etc. When there is CPU bound tasks then the threads don't give up the GIL as they need the interpreter to interpret the code, when there no CPU work the threads give up the GIL.
+
+So when python main.py
+- A process is created with compiler, interpreter, std library, stack and heap for the process
+- Main thread executes the python bytecode via the interpreter using a core allotted by the OS
+- The main thread acquires the GIL a lock to the interpreter so that when it starts executing the code no other thread accesses the interpreter.
+- If there are multiple threads within a process then they will have to wait for a switch which will release the GIL and then the next thread can acquire it.
+
+## GIL (Global Interpreter Lock)
+It is a lock used to acquire the interpreter by a thread. In python only single thread can execute the bytecode via the interpreter hence the threads acquire the GIL which gives them access to the interpreter while thread A has the GIL thread B needs to wait for a switch until then thread B cannot execute its bytecode.
+
+Hence this is why we cannot achieve true parallelism when using threads in python.
+
+### 
+
 ## Memory Management in Python
 1. Primary Mechanism: Reference Counting
 - Every object has a refecount integer
