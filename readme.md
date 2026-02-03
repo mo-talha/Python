@@ -3062,7 +3062,10 @@ It is a lock used to acquire the interpreter by a thread. In python only single 
 
 Hence this is why we cannot achieve true parallelism when using threads in python.
 
-### 
+### Why python has GIL ?
+Python was around even before multicore CPUs hence the it was designed for single core CPUs and its memory management was also designed according to this.
+
+Pythons interpreter is not thread safe meaning multiple threads can cause poor memory management especially the refcount system. To avoid doing a whole rework for multicore CPUs python's author introduced a GLOBAL LOCK called the GIL to the interpreter to protect the memory management in python. The GIL makes sure that only one thread has access to the interpreter at a given time.
 
 ## Memory Management in Python
 1. Primary Mechanism: Reference Counting
