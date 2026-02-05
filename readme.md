@@ -1,5 +1,21 @@
 # Python Notes
 
+## Project Ideas
+Build Around Below requirements.
+
+Requirements:
+Bachelor’s degree in BE/B.Tech, BSc, BCA, or equivalent.
+At least 1 year of professional experience in Python development.
+Hands-on experience with AWS services, including Lambda, Glue, AppSync, API Gateway, and Aurora RDS, and experience with AWS serverless deployment.
+Hands-on experience with AWS and Infrastructure as Code (IaC).
+Strong problem-solving skills.
+Experience developing and implementing robust back-end functionalities, including data processing, APIs, and integrations with external systems.
+Self-motivated and able to work independently as well as part of a team.
+Familiarity with Git and CI/CD pipelines using Bitbucket/GitHub.
+Solid understanding of API design, REST API, and GraphQL.
+Knowledge of unit testing.
+
+
 **print() function**
 The print function can take in multiple strings and multiple data types at once and prints them separating with a space.
 Ex: print(“talha”) → talha, print(“talha”, “yaseen”, “taha”), print(“talha”, 25, “yaseen”, 21, 44) all these are valid.
@@ -3138,6 +3154,19 @@ print(count)
 Now even when t1 sleeps t2 cannot access read the count variable as t1 has locked it, t2 will only be able to read it when t1 releases the lock.
 
 ### What is a Deadlock ?
+A deadlock occurs when two or more threads are blocked forever, each waiting for a resource held by another. All four conditions must be present:
+- Mutual Exclusion
+- Hold and Wait
+- No Preemption (Forcibly taking control, so that others can have access like context switching)
+- Circular Wait 
+
+### How to prevent Deadlocks ?
+
+
+### Real Example of a deadlock 
+In a database, Transaction A locks Row 1 and waits for Row 2, while Transaction B locks Row 2 and waits for Row 1. Both wait forever. Databases detect this and abort one transaction.
+
+### Why locks are still necessary even though python has GIL ?
 
 
 ## GIL (Global Interpreter Lock)
