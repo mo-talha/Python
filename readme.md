@@ -3162,6 +3162,52 @@ A deadlock occurs when two or more threads are blocked forever, each waiting for
 
 ### How to prevent Deadlocks ?
 
+### What is a Reentrant lock ?
+RLock is a reentrant lock that allows the same thread to acquire the same lock multiple times without deadlocking. It maintains an acquisition count each acquire increments the count, each release decrements it. The lock is only fully released to other threads when the count reaches zero. Regular Lock would deadlock if the same thread tries to acquire it twice.
+
+code example:
+```
+r_lock = threading.RLock()
+
+def outer_method():
+    r_lock.acquire()
+    try:    
+        print("r_lock acquired by outer method")
+        inner_method()
+        time.sleep(3)
+    finally:
+        r_lock.release()
+        print("r_lock released by outer method")
+        
+def inner_method():
+    r_lock.acquire()
+    try:
+        print("r_lock acquired by inner method")
+        time.sleep(5)
+    finally:
+        r_lock.release()
+        print("r_lock released by inner method")
+
+def thread_2():
+    print("t2 trying to acquire r_lock")
+    r_lock.acquire()
+    
+    print("r_lock acquired by thread 2")
+
+
+t1 = threading.Thread(name="thread_1", target=outer_method)
+t2 = threading.Thread(name="thread_2", target=thread_2)
+
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+```
+
+In the above code t1 will acquire the lock twice in the outer and inner. When both outer and inner release the lock only then t2 will be able to acquire the lock.
+
+### When would you use RLock ?
+When you have recursive functions or methods that call each other and need the same synchronization. For example, in a bank account class where transfer() calls withdraw() which calls has_sufficient_funds() - all needing the same lock.
 
 ### Real Example of a deadlock 
 In a database, Transaction A locks Row 1 and waits for Row 2, while Transaction B locks Row 2 and waits for Row 1. Both wait forever. Databases detect this and abort one transaction.
