@@ -3415,3 +3415,20 @@ Yes, with gc.set_threshold() you can adjust for different workloads. For example
 
 ** Try understanding and implement what he is saying
 We asked all our internship applicants to create a simple CRUD wallet app, and every single one missed how threads and race conditions work. All of them, while updating the wallet balance, fetched the balance from the database, performed calculations in the app, and then updated the database. Although expecting university students to know everything is a bit too much, understanding these things makes you stand out.
+
+## Iterators
+
+### What is an iteration ?
+Iteration is a general term for taking each item of something one after another. Any time we use a loop, explicit or implicit to go over a group of items, that is iteration.
+
+Code Example:
+```
+nums = [1, 2, 3]
+
+for i in nums:
+	print(i)
+```
+
+### What is Iterator ?
+An iterator is an object that allows the programmer to traverse through a sequence of data without having to store the entire data in memory.
+
