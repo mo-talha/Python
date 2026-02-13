@@ -3432,3 +3432,63 @@ for i in nums:
 ### What is Iterator ?
 An iterator is an object that allows the programmer to traverse through a sequence of data without having to store the entire data in memory.
 
+Code Example
+```
+L = [x for x in range(1, 100000)]
+
+for x in L:
+	print(x*2)
+```
+
+In the above code python will create a list, load it into the memory and then we iterate over each item from this and multiply it by 2.
+
+The same can be printed using the range function and it will be much more memory efficient.
+
+```
+L = range(1, 100000)
+
+for i in L:
+	print(i*2)
+```
+
+In the above example, in memory a list won't be created but a range object will be created which will have three variables start = 1, stop = 100000, step = 1
+
+When we run a loop the loop will pick only the required number that is 1 on the first iteration, then on the second iteration it will generate 2 on demand and so on, since it does not pre load a list of 100000 numbers it is very much efficient compared to creating a list object and then iterating over it.
+
+### What is an iterable ?
+Iterable is an object, which one can iterate over.
+It generates an iterator when passed to `iter()` method.
+
+### Points to remember
+- Every iterator is an iterable.
+- Not all iterables are iterators.
+
+Example:
+```
+L = [1, 2, 3, 4, 5]
+```
+L is an iterable but it is not an iterator, because the iterators main feature is it is memory efficient and loads items on demand but here L is load early.
+
+### Trick to know which is an iterable and which is an iterator 
+- Every iterable has an iter function.
+- Every iterator has both iter and next function. 
+
+### There are 2 ways to know if a function is an iterable via code 
+```
+a = 2
+
+for i in a:
+	print(i)
+
+# If the above code is an iterable then the loop will run else the runtime will throw an error stating i is not an iterable, in # this case the runtime will throw an error as int object is not an iterable.
+```
+
+Similarly,
+```
+a = 2
+
+print(dir(a))
+```
+
+This will print all the magic methods of a, if we see the method `__iter__` then the object is an iterable, similarly if the magic methods contain `__next__` then it is an iterator, which is memory efficient.
+
