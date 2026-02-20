@@ -3416,7 +3416,7 @@ Yes, with gc.set_threshold() you can adjust for different workloads. For example
 ** Try understanding and implement what he is saying
 We asked all our internship applicants to create a simple CRUD wallet app, and every single one missed how threads and race conditions work. All of them, while updating the wallet balance, fetched the balance from the database, performed calculations in the app, and then updated the database. Although expecting university students to know everything is a bit too much, understanding these things makes you stand out.
 
-## Iterators
+## Iterators (CampusX lecture "What is iterators in python?")
 
 ### What is an iteration ?
 Iteration is a general term for taking each item of something one after another. Any time we use a loop, explicit or implicit to go over a group of items, that is iteration.
@@ -3491,4 +3491,10 @@ print(dir(a))
 ```
 
 This will print all the magic methods of a, if we see the method `__iter__` then the object is an iterable, similarly if the magic methods contain `__next__` then it is an iterator, which is memory efficient.
+
+### Difference b/w range() and list(), tuple(), set() etc 
+Both have 2 class one main class which implements the __iter__ method and returns the iterator of that class and another iterator class specific to that container which implements __next__ and returns the current value.
+
+The main difference is range generates numbers on the fly (lazy) while list stores them all in memory(eager) but both return an iterotor with __next__ when we call iter() on them.
+
 
