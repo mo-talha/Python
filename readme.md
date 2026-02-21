@@ -3549,3 +3549,46 @@ while True:
 Also unlike list the `__next__` method of `MyRange` generates numbers on demand i.e. when 1 is printed, at the same time the self.current is incremented by 1 which makes it 2, and if `__next__` is called again then this 2 is printed.
 
 But in a list the integer objects are all created in memory first, then when `__next__` is called it prints these int objects from the memory.
+
+# Single Class Approach
+```
+class MyRange:
+    def __init__(self, start, stop, step=1):
+        self.start = start
+        self.stop = stop
+        self.step = step
+        self.current = start
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if self.current >= self.stop:
+            raise StopIteration
+        value = self.current
+        self.current += self.step
+        return value
+
+r = MyRange(1, 5)
+it1 = iter(r)
+it2 = iter(r)
+
+print(it1.__next__())
+print(it1.__next__())
+print(it2.__next__())
+```
+
+Problem with single class approach, now a single class is both the iterable and the iterator. The iterable class now manages 
+the state as well, as we can see above the cannot run two loops or initializing another iterator does not start fresh instead
+it starts from the previous state. This means we cannot run multiple for loops over the same data.
+
+Also this class breaks a key princile from SOLID, S - Single Responsibility Principle, the same class becomes the iterator and
+the iterable.
+
+With Two-class approach the SRP is preserved and multiple iterators or loops are possible for the same data.
+
+But we can fix the multiple iterators or multiple loops problem in the above single class as well, by returning a new MyRange(self.start, self.stop, self.step) object on every `__iter__` call or basically every for loop. But Again this is bad because the class still violates SRP.
+
+So in 2 class approach the iterable class or `MyRange` is the container its job is to hold the data and know how to create an iterator.
+
+The iterator class or `MyRangeIterator` knows the current position, provides next element, tracks iteration state.
