@@ -3545,3 +3545,7 @@ while True:
 	except as e:
 		break
 ```
+
+Also unlike list the `__next__` method of `MyRange` generates numbers on demand i.e. when 1 is printed, at the same time the self.current is incremented by 1 which makes it 2, and if `__next__` is called again then this 2 is printed.
+
+But in a list the integer objects are all created in memory first, then when `__next__` is called it prints these int objects from the memory.
