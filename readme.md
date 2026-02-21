@@ -3497,4 +3497,51 @@ Both have 2 class one main class which implements the __iter__ method and return
 
 The main difference is range generates numbers on the fly (lazy) while list stores them all in memory(eager) but both return an iterotor with __next__ when we call iter() on them.
 
+Code Example
+```
+class MyRange:
+	def __init__(self, start, stop, step=1):
+		self.start = start
+		self.stop = stop
+		self.step = step
+	
+	def __iter__(self):
+		return MyRangeIterator(self.start, self.stop, self.step)
 
+class MyRangeIterator:
+	def __init__(self, start, stop, step):
+		self.start = start
+		self.stop = stop
+		self.step = step
+		self.current = start
+
+	def __iter__(self):
+		return self
+
+	def __next__(self):
+		if self.current >= self.end:
+			raise StopIteration
+		value = self.current
+		self.current += self.step
+		return value
+
+r = MyRange(1, 5)
+
+for i in r:
+	print(i)
+```
+
+Now the python interpreter will create an object of MyRange in memory with start value as 1, stop value as 5. 
+
+When a for loop is run on r the interpreter will call __iter__ and will get the object of MyRangeIterator, then the __next__ method of MyRangeIterator is called at i and we get the current value i.e. 1.
+
+Internally, the next dunder is called until StopIteration is raised and the value returned by the __next__ is printed.
+
+```
+it = r.__iter__()
+while True:
+	try:
+		print(it.__next__())
+	except as e:
+		break
+```
