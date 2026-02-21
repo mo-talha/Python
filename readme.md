@@ -3578,6 +3578,13 @@ print(it1.__next__())
 print(it2.__next__())
 ```
 
+```
+Output:
+1
+2
+3
+```
+
 Problem with single class approach, now a single class is both the iterable and the iterator. The iterable class now manages 
 the state as well, as we can see above the cannot run two loops or initializing another iterator does not start fresh instead
 it starts from the previous state. This means we cannot run multiple for loops over the same data.
