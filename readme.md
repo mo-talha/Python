@@ -3599,3 +3599,99 @@ But we can fix the multiple iterators or multiple loops problem in the above sin
 So in 2 class approach the iterable class or `MyRange` is the container its job is to hold the data and know how to create an iterator.
 
 The iterator class or `MyRangeIterator` knows the current position, provides next element, tracks iteration state.
+
+## Generators
+### What problem do Generators solve ?
+```
+class MyRangeIterator:
+    def __init__(self, start, stop, step):
+        self.current = start
+        self.stop = stop
+        self.step = step
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if self.current >= self.stop:
+            raise StopIteration
+        value = self.current
+        self.current += self.step
+        return value
+```
+So much boilerplate for a simple counter, Generators automate this process.
+
+### What is a Generators ?
+A generator is a function that uses `yield` instead of `return`. When called it returns a generator object (which is an iterator) without starting execution.
+
+```
+def simple_generator():
+	print("First Yield")
+	yield 1
+
+	print("Second Yield")
+	yield 2
+
+	print("Third Yield")
+	yield 3
+
+	print("Generator done")
+
+# Create generator object (NO code runs yet)
+gen = simple_generator()
+print(f"Generator object: {gen}")
+print(f"Is it an iterator? {hasattr(gen, '__next__')}")
+
+# Now it runs
+print(next(gen))  # Prints: First yield, then 1
+print(next(gen))  # Prints: Second yield, then 2
+print(next(gen))  # Prints: Third yield, then 3
+print(next(gen))  # StopIteration! (Generator done)
+```
+
+The function pauses at each yield and resumes on `next()` call.
+
+### MyRange() using generator
+```
+def my_range(start, stop, step):
+	current = start
+
+	while start <= end:
+		yield current
+		current += step
+
+r = my_range(1, 4, 1)
+print(r) # will print that it is a generator object
+print(next(r)) this will trigger yield i.e. __next__ will be called and 1 will be printed
+print(next(r)) again __next__ will be called and 2 will be printed
+```
+
+So we created a generator function same as MyRange in a much simpler way without writing so much boilerplate with a two class approach.
+
+### Uses of Generators
+- Square of numbers in a range
+```
+list_squares = [x**2 for x in range(1, 10)]
+```
+
+The above statement is eager and it will create all the squares in memory.
+
+```
+gen_squares = (x**2 for x in range(1, 10))
+```
+
+The above line is lazy, will create square on demand or on a next call.
+
+Both can be used with loops,
+```
+for i in list_squares:
+	print(i)
+```
+
+similarly,
+```
+for i in gen_squares:
+	print(i)
+```
+
+### When should we use Generators ?
