@@ -3694,4 +3694,7 @@ for i in gen_squares:
 	print(i)
 ```
 
+But it the generator approach will occupy very less memory compared to the list approach.
+
 ### When should we use Generators ?
+When we have large data sets like a file or we need to process a million numbers etc instead of opening it and loading it in the memory or creating a list with 1 million numbers in the memory, we can create a generator function, which will load the numbers or the lines from the file only on demand. 
